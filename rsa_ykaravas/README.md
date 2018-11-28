@@ -1,5 +1,13 @@
 **README**
 
+Included in this project is the full source code, written in C++ with the ability to 
+encrypt, decrypt and eavesedropp/crack our relatively light version of the RSA algorithm.
+I have added a few unit tests and as of this writing, hope to adde more, however, creating 
+unittests in c++ is a bit more cumbersome and time consuming than most other languages. 
+This document, is of course the Readme containing project requirements list, project
+structure, build instructions, usage instructions on how to run the program and finally
+a thorough description of the programs workflow, abilities and functions.
+
 
 **Requirements**
 
@@ -72,6 +80,10 @@ Once executable is run you will have several options:
 
 
 Program will run on loop un til exit command is executed.
+
+
+**Description**
+
 
 
 

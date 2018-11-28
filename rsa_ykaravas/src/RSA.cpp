@@ -4,6 +4,12 @@
 #include <limits.h>
 #include <string.h>
 #include <cstring>
+#include <string>
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <vector>
+#include <sstream>
 
 #include "CoreFunctions.h"
 #include "unittests.h"
@@ -11,17 +17,38 @@
 
 #define MAX_LENGTH 10000
 
+std::vector<int> readFile(std::string filename){
+
+    std::ifstream data(filename);
+    std::string line;
+    std::vector<int> prime_list;
+
+    while (std::getline(data, line)){
+
+        std::stringstream lineStream(line);
+
+        std::string cell;
+        while(std::getline(lineStream, cell, ',')){
+
+            prime_list.push_back(std::stoi(cell));
+        }
+    }
+    return prime_list;
+}
 
 
 int main() {
 
 
     while(1) {
-        long long int p;
-        long long int q;
-        long long int public_key;
-        long long int private_key;
-        long long int z_group;
+
+        long long int bob_public_key;
+        long long int bob_private_key;
+        long long int bob_z_group;
+        long long int alice_public_key;
+        long long int alice_private_key;
+        long long int alice_z_group;
+        long long int brute_forced_private_key;
 
         char message_to_encrypt_char[MAX_LENGTH] = {'\0'};
         long long int message_to_encrypt_long[MAX_LENGTH*4] = {0};
@@ -45,51 +72,102 @@ int main() {
         std::cin >> input;
 
         if(input == "gen"){
-            std::ifstream genfile;
-            genfile.open("../config/gen.txt");
 
-            genfile >> p >> q;
+            std::cout << "\nType c to use Config file or r for random primes: ";
 
-            if((p == 0) || (q == 0)) {
-                std::cout << std::endl << std::endl
-                          << "Generator file with p and q, 'gen.txt', does not exist."
-                          << std::endl << std::endl;
-                continue;
+
+            std::string input2;
+            std::cin >> input2;
+            std::cout << std::endl;
+            std::pair<int, int> alice_primes;
+            std::pair<int, int> bob_primes;
+
+            if(input2 == "c" || input2 == "C"){
+                std::ifstream genfile;
+                genfile.open("../config/gen.txt");
+
+                genfile >> bob_primes.first >> bob_primes.second;
+                genfile >> alice_primes.first >> alice_primes.second;
+
+                if((bob_primes.first == 0) || (bob_primes.second == 0)) {
+                    std::cout << std::endl << std::endl
+                              << "Generator file with p and q, 'gen.txt', does not exist."
+                              << std::endl << std::endl;
+                    continue;
+                }
+
+            }
+            else if(input2 == "r" || input2 == "R"){
+
+                std::vector<int> prime_list = readFile("../config/primes.txt");
+
+
+                srand (time(NULL));
+
+                int first = rand() % prime_list.size();
+                int second = rand() % prime_list.size();
+
+                bob_primes.first = prime_list.at(first);
+                bob_primes.second = prime_list.at(second);
+
+                std::cout << "BOB Primes are P = " << bob_primes.first << " and Q = " << bob_primes.second << std::endl << std::endl;
+
+                first = rand() % prime_list.size();
+                second = rand() % prime_list.size();
+
+                alice_primes.first = prime_list.at(first);
+                alice_primes.second = prime_list.at(second);
+
+                std::cout << "ALICE Primes are P = " << alice_primes.first << " and Q = " << alice_primes.second << std::endl << std::endl;
+
             }
 
-            if (prime(p)) {
 
-                std::cerr << p << " is not prime." << std::endl;
+            if (prime(alice_primes.first) || prime(alice_primes.first)) {
+
+                std::cerr << "ALICE primes are invalid." << std::endl;
                 return 1;
             }
-            if (prime(q)) {
+            if (prime(bob_primes.first) || prime(bob_primes.first)) {
 
-                std::cerr << q << " is not prime." << std::endl;
+                std::cerr << "BOB primes are invalid." << std::endl;
                 return 1;
             }
 
 
             //Generate public and private keys from p and q
-            publicKeyGen(p, q, &z_group, &public_key);
-            std::cout << "public key: " << public_key << ", " << z_group << std::endl;
-            privateKeyGen(p, q, &z_group, &private_key, public_key);
-            std::cout << "private key: " << private_key << ", " << z_group << std::endl;
+            publicKeyGen(alice_primes.first, alice_primes.second, &alice_z_group, &alice_public_key);
+            std::cout << "ALICE public key: " << alice_public_key << ", " << alice_z_group << std::endl;
+            privateKeyGen(alice_primes.first, alice_primes.second, &alice_z_group, &alice_private_key, alice_public_key);
+            std::cout << "ALICE private key: " << alice_private_key << ", " << alice_z_group << std::endl << std::endl;
 
-            std::ofstream pub_key_file;
-            pub_key_file.open("../output/my_pub_key.txt");
-            pub_key_file << public_key << " " << z_group << "\n";
-            pub_key_file.close();
+            std::ofstream alice_pub_key_file;
+            alice_pub_key_file.open("../output/Alice/pub_key.txt");
+            alice_pub_key_file << alice_public_key << " " << alice_z_group << "\n";
+            alice_pub_key_file.close();
 
-            // Generate default public key to intercept as well
-            std::ofstream other_pub_key_file;
-            other_pub_key_file.open("../output/other_pub_key.txt");
-            other_pub_key_file << public_key << " " << z_group << "\n";
-            other_pub_key_file.close();
 
-            std::ofstream priv_key_file;
-            priv_key_file.open("../output/my_priv_key.txt");
-            priv_key_file << private_key << " " << z_group << "\n";
-            priv_key_file.close();
+            std::ofstream alice_priv_key_file;
+            alice_priv_key_file.open("../output/Alice/priv_key.txt");
+            alice_priv_key_file << alice_private_key << " " << alice_z_group << "\n";
+            alice_priv_key_file.close();
+
+            //Generate public and private keys from p and q
+            publicKeyGen(bob_primes.first, bob_primes.second, &bob_z_group, &bob_public_key);
+            std::cout << "BOB public key: " << bob_public_key << ", " << bob_z_group << std::endl;
+            privateKeyGen(bob_primes.first, bob_primes.second, &bob_z_group, &bob_private_key, bob_public_key);
+            std::cout << "BOB private key: " << bob_private_key << ", " << bob_z_group << std::endl << std::endl;
+
+            std::ofstream bob_pub_key_file;
+            bob_pub_key_file.open("../output/Bob/pub_key.txt");
+            bob_pub_key_file << bob_public_key << " " << bob_z_group << "\n";
+            bob_pub_key_file.close();
+
+
+            std::ofstream bob_priv_key_file;
+            bob_priv_key_file.open("../output/Bob/priv_key.txt");
+            bob_priv_key_file << bob_private_key << " " << bob_z_group << "\n";
+            bob_priv_key_file.close();
 
         }
 
@@ -102,31 +180,31 @@ int main() {
             unsigned int len = strlen(message_to_encrypt_char);
 
             //Encrypt, then decrypt the message
-            std::cout << "Original text: " << message_to_encrypt_char << std::endl;
+            std::cout << "ALICE Original message: " << message_to_encrypt_char << std::endl;
             convertChar2Long(message_to_encrypt_char, message_to_encrypt_long,false);
 
 
             //Encrypt
             std::ifstream pubkey;
-            pubkey.open("../output/my_pub_key.txt");
+            pubkey.open("../output/Bob/pub_key.txt");
             long long int key;
             long long int group;
             pubkey >> key >> group;
 
             if(key == 0){
                 std::cout << std::endl << std::endl
-                          << "Public key file, 'my_pub_key.txt', does not exist."
+                          << "Public key file, 'Bob/pub_key.txt', does not exist."
                           << std::endl << std::endl;
                 continue;
             }
 
             encrypt(message_to_encrypt_long, key, group, message_to_decrypt_long, len*4);
             convertLong2Char(message_to_decrypt_long, message_to_decrypt_char,false);
-            std::cout << "Encrypted text: " << message_to_decrypt_char << std::endl;
+            std::cout << "ALICE Encrypted message to BOB: " << message_to_decrypt_char << std::endl;
             std::ofstream enc_msg_txt;
 
 
-            enc_msg_txt.open("../output/enc_msg.dat",std::ios::binary);
+            enc_msg_txt.open("../output/Alice/enc_msg.dat",std::ios::binary);
             for(int i = 0; i < int(sizeof(message_to_decrypt_long)/sizeof(message_to_decrypt_long[0])); i++){
                 enc_msg_txt << message_to_decrypt_long[i] << "\n";
             }
@@ -139,7 +217,7 @@ int main() {
 
             std::ifstream encMesgFile;
 
-            encMesgFile.open("../output/enc_msg.dat", std::ios::binary);
+            encMesgFile.open("../output/Alice/enc_msg.dat", std::ios::binary);
             for(int i = 0; i < int(sizeof(message_to_decrypt_long)/sizeof(message_to_decrypt_long[0])); i++){
                 encMesgFile >> message_to_decrypt_long[i];
             }
@@ -148,14 +226,14 @@ int main() {
             //Decrypt
 
             std::ifstream privkey;
-            privkey.open("../output/my_priv_key.txt");
+            privkey.open("../output/Bob/priv_key.txt");
             long long int key;
             long long int group;
             privkey >> key >> group;
 
             if(key == 0) {
                 std::cout << std::endl << std::endl
-                          << "Private key file, 'my_priv_key.txt', does not exist."
+                          << "Private key file, 'Bob/priv_key.txt', does not exist."
                           << std::endl << std::endl;
                 continue;
             }
@@ -163,31 +241,51 @@ int main() {
             decrypt(message_to_decrypt_long, key, group, decrypted_message_long, MAX_LENGTH*4);
 
             convertLong2Char(decrypted_message_long, decrypted_message_char,false);
-            std::cout << "Decrypted text: " << decrypted_message_char << std::endl;
+            std::cout << "BOB Decrypted ALICE message: " << decrypted_message_char << std::endl;
             std::ofstream dec_msg_txt;
-            dec_msg_txt.open("../output/dec_msg.txt");
+            dec_msg_txt.open("../output/Bob/dec_msg.txt");
             dec_msg_txt << decrypted_message_char;
             dec_msg_txt.close();
         }
         else if (input == "eve"){
 
             std::ifstream pubkey;
-            pubkey.open("../output/other_pub_key.txt");
+            pubkey.open("../output/Bob/pub_key.txt");
             long long int intercepted_pub_key;
             long long int group;
             pubkey >> intercepted_pub_key >> group;
             if((intercepted_pub_key == 0) && (group == 0)){
                 std::cout << std::endl << std::endl
-                          << "Intercepted public key file, 'other_pub_key.txt', does not exist."
+                          << "Intercepted public key file, 'Bob/pub_key.txt', does not exist."
                           << std::endl << std::endl;
                 continue;
             }
             PrimeClass pq = brute_force_exec(group);
-            privateKeyGen(pq.p, pq.q, &group, &private_key, intercepted_pub_key);
-            std::cout << "Brute Forced Private key: " << private_key << std::endl;
+            privateKeyGen(pq.p, pq.q, &group, &brute_forced_private_key, intercepted_pub_key);
+            std::cout << "EVE Brute Forced BOB Private key: " << brute_forced_private_key << std::endl;
+
+            // Decrypt Alice's message
+            std::ifstream encMesgFile;
+
+            encMesgFile.open("../output/Alice/enc_msg.dat", std::ios::binary);
+            for(int i = 0; i < int(sizeof(message_to_decrypt_long)/sizeof(message_to_decrypt_long[0])); i++){
+                encMesgFile >> message_to_decrypt_long[i];
+            }
+
+            encMesgFile.close();
+            decrypt(message_to_decrypt_long, brute_forced_private_key, group, decrypted_message_long, MAX_LENGTH*4);
+
+            convertLong2Char(decrypted_message_long, decrypted_message_char,false);
+            std::cout << "EVE Decrypted ALICE message to BOB: " << decrypted_message_char << std::endl;
+            std::ofstream dec_msg_txt;
+            dec_msg_txt.open("../output/Eve/intercepted_msg.txt");
+            dec_msg_txt << decrypted_message_char;
+            dec_msg_txt.close();
+
+            // Save Brute Forced key
             std::ofstream brute_forced_key_file;
-            brute_forced_key_file.open("../output/brute_forced_priv_key.txt");
-            brute_forced_key_file << private_key << " " << group << "\n";
+            brute_forced_key_file.open("../output/Eve/brute_forced_priv_key.txt");
+            brute_forced_key_file << brute_forced_private_key << " " << group << "\n";
             brute_forced_key_file.close();
             pubkey.close();
 

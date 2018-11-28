@@ -4,7 +4,7 @@ Included in this project is the full source code, written in Python with the abi
 for Alice to Encrypt and "send" to Bob, Bob to receive and decrypt from Alice and Eve 
 to "listen in" and crack their private keys and encrypted messages. Unittest source 
 code is also included in the root level directory of this project. This readme also
-includes requirements for the program (of which there are vb\ery few), a description
+includes requirements for the program (of which there are very few), a description
 of the project directory structure and files, directions on how to run it and a 
 detailed description of the program's inner workings from the point of view of Alice,
 Bob and Eve. 

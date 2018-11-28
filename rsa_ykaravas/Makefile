@@ -36,8 +36,8 @@ unittests.o: $(INC_DIR)/unittests.h $(SRC_DIR)/unittests.cpp
 
 
 clean:
-	rm -f $(BIN_DIR)/RSA $(OUTPUT_DIR)/enc_msg.dat $(OUTPUT_DIR)/dec_msg.txt 
-	rm -f $(OUTPUT_DIR)/my_priv_key.txt $(OUTPUT_DIR)/my_pub_key.txt 
-	rm -f $(OUTPUT_DIR)/other_pub_key.txt $(OUTPUT_DIR)/brute_forced_priv_key.txt
+	rm -f $(BIN_DIR)/RSA $(OUTPUT_DIR)/Alice/enc_msg.dat $(OUTPUT_DIR)/Bob/dec_msg.txt 
+	rm -f $(OUTPUT_DIR)/Alice/priv_key.txt $(OUTPUT_DIR)/Alice/pub_key.txt 
+	rm -f $(OUTPUT_DIR)/Bob/pub_key.txt $(OUTPUT_DIR)/Eve/brute_forced_priv_key.txt
 	rm -f $(OBJ_DIR)/PrimeClass.o $(OBJ_DIR)/RSA.o $(OBJ_DIR)/CoreFunctions.o
-	rm -f $(OBJ_DIR)/unittests.o 
+	rm -f $(OBJ_DIR)/unittests.o $(OUTPUT_DIR)/Bob/priv_key.txt $(OUTPUT_DIR)/Eve/intercepted_msg.txt
