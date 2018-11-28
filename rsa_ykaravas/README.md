@@ -13,22 +13,22 @@
 
 **Structure**
 
--rsa_ykaravas
-   -src (dir)
-      -*.cpp files
-   -include (dir)
-      -*.h files
-   -build (dir)
-      -*.o files
-   -bin (dir)
-      -binary executable "RSA"
-   -config (dir)
-      -*.txt *.dat files including public private 
-       key pair files, message files, "intercepted"
-       public key files etc...
-   -testFiles
-      -*.txt files used for unit testing
-   -Makefile (file)
+   -rsa_ykaravas
+      -src (dir)
+         -*.cpp files
+      -include (dir)
+         -*.h files
+      -build (dir)
+         -*.o files
+      -bin (dir)
+         -binary executable "RSA"
+      -config (dir)
+         -*.txt *.dat files including public private 
+          key pair files, message files, "intercepted"
+          public key files etc...
+      -testFiles
+         -*.txt files used for unit testing
+      -Makefile (file)
 
 
 **Build**
@@ -36,7 +36,7 @@
 
 in project root directory, run:
 
-    make
+   make
 
 
 OR
@@ -44,13 +44,13 @@ OR
 
 To build with OpenMP parallelization:
 
-    make OMP=1
+   make OMP=1
 
 
 
 To Clean, from root directory run:
 
-    make clean
+   make clean
 
 
 
