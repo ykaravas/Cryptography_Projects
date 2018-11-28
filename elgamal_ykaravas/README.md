@@ -1,5 +1,14 @@
 **README**
 
+Included in this project is the full source code, written in Python with the ability 
+for Alice to Encrypt and "send" to Bob, Bob to receive and decrypt from Alice and Eve 
+to "listen in" and crack their private keys and encrypted messages. Unittest source 
+code is also included in the root level directory of this project. This readme also
+includes requirements for the program (of which there are vb\ery few), a description
+of the project directory structure and files, directions on how to run it and a 
+detailed description of the program's inner workings from the point of view of Alice,
+Bob and Eve. 
+
 
 **Requirements**
 
@@ -80,12 +89,95 @@ When program is started, you shoud see the following:
 
 All the necessary commands are explained above. Note that "enc" must be run at least once
 before "dec" or "eve" and "gen" must be run once before all of them to initiate key 
-creation/exchnage. Purge will delete all files in actor directories except for Alice's
-original_msg.txt. Promgram can handle any input to be encrypted.Program will run on loop 
+creation/exchange. Purge will delete all files in actor directories except for Alice's
+original_msg.txt. The program can handle any input to be encrypted. Program will run on loop 
 until exit command is executed.
 
 
 **Description**
+
+
+The first command that should be run is "gen" which stands for generate. The user will then be 
+prompted to either manually type a large prime number or alternatively type "rand" which will
+query a static text file in Generated_Files directory filled with large primes. Program will
+then check to make sure the number is in fact a prime and is at least 8 bits. The program then
+simulates Alice using the large prime to generate her public and private keys using a function 
+called generateKeys. When Alice generates her keys, she does not pass the optional primitive root
+argument to the generate function but rather the function chooses one using a findPrimitiveRoot
+function along with a moduloExponent function. Bob will later use this same coprime to generate
+his keys. This function generates Alice's public key which consists of the original large prime,
+which represents the group, a coprime, and the same raised to the power of her secret number mod 
+the large prime. Note that is this function of course also chooses her random integer from the group
+over the large prime. The private key consists of the large prime, coprime and secret key. 
+
+This process is repeated for Bob with the minor difference, however, that Bob uses the large prime
+along with the coprime that Alice has "published" in order to generate his keys. Their keys are saved
+in the Generated_Files/Alice and Generated_Files/Bob directories, respectively. Alice's directory
+also starts out with the original_msg.txt file which can be edited manually or via the "msg" 
+command of the program which will then prompt the user to enter the new plain text message that 
+Alice will eventually encrypt and "send" to Bob. 
+
+The "enc" command, which stands for encrypt, can then be run. This command simulates Alice encrypting
+the original_msg.txt and sending it to Bob. This command prompts the program to load the origuinal_msg.txt,
+Alice's private key and Bob's public key. Next, the encrypt function is called with the three variables, 
+just mentioned, as arguments. The first thing this function does is compute the shared secret key using
+Alice's private number in her private key in conjunction with Bob's coprime raised to his private number
+modulo the group prime (this was the third component of Bob's public key). Next, the function converts
+the string input from char bytes to ints so it can be encrypted. These integers are multiplied by the 
+shared secret key and the product is modded by the group prime. Finally the encrypted output is saved to 
+Alice's directory (where Bob retrieves it from thus simulating the sending of the message to Bob).  
+
+After "enc" is called, "dec" can be called which of course stands for decrypt. This function is similar 
+to the encrypt one except Bob loads his own private kay, Alice's public key and the encrypted message. 
+The decrypt function takes all these as arguments and uses the third part of Alice's public key,
+coprime^her_private mod group_prime, along with Bob's private number in his private key to calculate 
+the secret shared key. The decrypt function, of course, has to go one step further and calculate the 
+multiplicative inverse of the secret shared key as well in order to decrypt. This is done by raising 
+the secret shared key ^ (group prime - 2) mod group prime. The encrypted message, still in the form of
+discreet integers, are multiplied by the multiplicative inverse of secret shared key and the product is
+modded by the group prime. Finally, the message is then converted back to ascii characters. The decrypted
+message is save to Bob's directory as proof that he has successfully decrypted it. The user in notified 
+throughout each of these processes if they were successful or not. 
+
+Finally, the "eve" command can be used (but note that this can even be used directly after the "enc" 
+). This command simulates Eve eavesdropping on the communications between Alice and Bob. Eve gets a
+hold of Bob's public key (which is easily accessible by anyone) and intercepts the encrypted message 
+which Alice had "sent" Bob earlier. Given that our primes are only on the order of 30 bits, it is fairly
+easy for Eve to brute force Bob's private number (the secret part of his private key) using the big 
+step little step algorithm. Once she does this, she can access Alice's public key and use that along
+with Bob's private key in order to derive the shared secret key and decrypt the encrypted message. The
+program then proceeds to call decrypt using these parameters, decrypts the message, loads the original 
+message from Alice's directory and compares the two for testing purposes in order to notify the user if 
+Eve was successful or not. Eve then saves the cracked message and secret key in her directory as proof
+of her success.
+
+There is also a purge command to get rid of every .txt file in case one wants to start fresh. Although 
+this is really no different from simply calling the "gen" function again since everyone's keys will be 
+regenerated rather than deleted. Finally, the "exit" command exits from the program. The unit tests can 
+be run separately using the command given above. 
+
+This description was written prior to any collaboration with my team yet. As one can imagine, however,
+the process my program will undergo during the collaboration process will be identical aside from 
+manual replacement of keys and messages with those provided by my project mates. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
