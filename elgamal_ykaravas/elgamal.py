@@ -23,7 +23,7 @@ class private_key(object):
 
 ######## HELPER FUNCTIONS ########
 
-def moduloExponent(base, exp, modulus):
+def modularExp(base, exp, modulus):
 	return pow(base, exp, modulus)
 
 
@@ -45,7 +45,7 @@ def isPrime(num):
 
 def getSecret(pubkey, own_privkey):
 	group_prime = pubkey.group_prime
-	secret_key = moduloExponent(pubkey.prim_rt_exp_priv, own_privkey.priv_num, group_prime)
+	secret_key = modularExp(pubkey.prim_rt_exp_priv, own_privkey.priv_num, group_prime)
 	return secret_key
 
 
@@ -55,7 +55,7 @@ def getMultInv(pubkey, own_privkey):
 	secret_key_inv = pow(secret_key, group_prime - 2, group_prime)
 	return secret_key_inv
 
-def gcd( a, b ):
+def gcd(a, b):
 	while b != 0:
 		c = a % b
 		a = b
@@ -74,8 +74,8 @@ def findPrimitiveRoot(num):
 
  	while(1):
  		possible_prim_root = random.randint( 2, num-1 )
- 		if not (moduloExponent(possible_prim_root, (num-1) // temp1, num) == 1):
- 			if not (moduloExponent(possible_prim_root, (num-1) // temp2, num) == 1):
+ 		if not (modularExp(possible_prim_root, (num-1) // temp1, num) == 1):
+ 			if not (modularExp(possible_prim_root, (num-1) // temp2, num) == 1):
  				return possible_prim_root
 
 			
@@ -113,18 +113,24 @@ def writeKeyOrMsg(filename, filetype, key = None, msg = None):
     
 
 def displayOptions():
-	print("Possible Commands:\n")
-	print("		  gen - This will prompt user for a large prime number. Can also")
-	print("		        type 'rand' instead of a large prime which will choose")
-	print("		        prime from prime.txt file in Generated_Files directory.")
-	print("		  enc - Alice will encrypt original_msg.txt in her directory")
-	print("		  dec - Bob will decrypt the message previously encrypted by Alice")
-	print("		  eve - Eve will simulate MITM attack by taking Alice's Public key")
-	print("		        and encrypted message and cracking them.")
-	print("		  msg - Change message in 'Generated_Files/Alice/original_msg.txt' file.")
-	print("		purge - Remove all files except Generated_Files/Alice/original_msg.txt")
-	print("		        and Generated_Files/primes.txt")
-	print("		 exit - Will exit program\n\n")
+	print("               MAIN PROGRAM FUNCTIONALITY & COMMAND LINE OPTIONS:")
+	print("---------------------------------------------------------------------------------\n")
+	print("		  gen  		This will prompt user for a large prime number. Can also")
+	print("		      		type 'rand' instead of a large prime which will choose")
+	print("		        	prime from prime.txt file in Generated_Files directory.")
+	print("		  enc  		Alice will encrypt original_msg.txt in her directory")
+	print("		  dec   	Bob will decrypt the message previously encrypted by Alice")
+	print("		  eve   	Eve will simulate MITM attack by taking Alice's Public key")
+	print("		        	and encrypted message and cracking them.")
+	print("		  msg   	to change message in 'Generated_Files/Alice/original_msg.txt' file.")
+	print("		purge   	to remove all files except original_msg.txt and primes.txt")
+	print("		 exit   	to terminate program\n\n\n")
+	print("                             AUXILIARY FUNCTIONS")
+	print("---------------------------------------------------------------------------------\n")
+	print("		  gcd   	to find gcd of two numbers")
+	print("		prime   	to find if a number is prime or not")
+	print("		modexp  	to perform fast exponentiation\n")
+
 
 
 def cleanFiles():
@@ -201,13 +207,13 @@ def generateKeys(large_prime, published_prim_root = 0):
 	# Alice is generating key here and hasnt published yet.
 	if published_prim_root == 0:
 		prim_root = findPrimitiveRoot(group_prime)
-		prim_root = moduloExponent(prim_root, 2, group_prime)
+		prim_root = modularExp(prim_root, 2, group_prime)
 	# Alice has published and Bob will use that primitive root as well.
 	else:
 		prim_root = published_prim_root
 
 	priv_num = random.randint(1, (group_prime - 1) // 2)
-	prim_rt_exp_priv = moduloExponent(prim_root, priv_num, group_prime)
+	prim_rt_exp_priv = modularExp(prim_root, priv_num, group_prime)
 
 	pub_key = public_key(group_prime, prim_root, prim_rt_exp_priv, num_bits)
 	priv_key = private_key(group_prime, prim_root, priv_num, num_bits)
@@ -402,7 +408,23 @@ def run():
 		# Remove all files except Generated_Files/Alice/original_msg.txt and Generated_Files/primes.txt
 		elif command == 'purge':
 			cleanFiles()
-		    			
+		elif command == 'gcd':
+			new_command = input('\nEnter two numbers to get their gcd: ')
+			a = new_command.split()
+			out = gcd(int(a[0]), int(a[1]))
+			print("\nGCD of {0} and {1} is: {2}".format(a[0], a[1], out))
+		elif command == 'prime':
+			new_command = input('\nEnter number to find out if it is prime: ')
+			out = isPrime(int(new_command))
+			if out == True:
+				print("\n{0} is prime".format(new_command))
+			elif out == False:
+				print("\n{0} is NOT prime".format(new_command))
+		elif command == 'modexp':
+			new_command = input('\nEnterthree numbers, base, exponent and modulo to perform modular exponentiation: ')		
+			a = new_command.split()
+			out = modularExp(int(a[0]), int(a[1]), int(a[2]))
+			print("\nOutput from modular exponentiation {0}^{1}*mod{2} is: {3}".format(int(a[0]), int(a[1]), int(a[2]), out))
 		elif command == 'exit':
 			break
 		
