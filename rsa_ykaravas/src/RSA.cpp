@@ -33,19 +33,19 @@ int main() {
         std::cout << std::endl;
         std::cout << "             MAIN PROGRAM FUNCTIONALITY & COMMAND LINE OPTIONS                  " << std::endl;
         std::cout << "------------------------------------------------------------------------------" << std::endl;
-        std::cout << "      'gen'           to generate key pairs for BOB and ALICE" <<std::endl;
-        std::cout << "      'enc'           to encrypt message located in 'config/msg.txt'" <<std::endl;
-        std::cout << "      'dec'           to decrypt message located in 'output/Alice/enc_msg.dat'" << std::endl;
-        std::cout << "      'eve'           to intercept ALICE message and BOB public key and find p & q" << std::endl;
-        std::cout << "      'msg'           to change message content in 'config/msg.txt' file." << std::endl;
+        std::cout << "       'gen'          to generate key pairs for BOB and ALICE" <<std::endl;
+        std::cout << "       'enc'          to encrypt message located in 'config/msg.txt'" <<std::endl;
+        std::cout << "       'dec'          to decrypt message located in 'output/Alice/enc_msg.dat'" << std::endl;
+        std::cout << "       'eve'          to intercept ALICE message and BOB public key and find p & q" << std::endl;
+        std::cout << "       'msg'          to change message content in 'config/msg.txt' file." << std::endl;
         std::cout << "      'unit'          to run all unit tests" << std::endl;
         std::cout << "      'exit'          to end/exit program" << std::endl << std::endl << std::endl;
-        std::cout << "                       AUXILIARY FUNCTIONS" << std::endl;
+        std::cout << "                          AUXILIARY FUNCTIONS" << std::endl;
         std::cout << "------------------------------------------------------------------------------" << std::endl;
-        std::cout << "      'factor'        to factor a number into two primes (if possible)" << std::endl;
-        std::cout << "      'gcd'           to find gcd of two numbers" << std::endl;
-        std::cout << "      'prime'         to find if a number is prime or not" << std::endl;
-        std::cout << "      'modexp'        to perform fast exponentiation" << std::endl << std::endl << std::endl;
+        std::cout << "    'factor'          to factor a number into two primes (if possible)" << std::endl;
+        std::cout << "       'gcd'          to find gcd of two numbers" << std::endl;
+        std::cout << "     'prime'          to find if a number is prime or not" << std::endl;
+        std::cout << "    'modexp'          to perform fast exponentiation" << std::endl << std::endl << std::endl;
 
         std::cout << "Enter Desired Opertation: ";
 
