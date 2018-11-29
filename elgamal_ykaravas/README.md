@@ -128,7 +128,7 @@ shared secret key and the product is modded by the group prime. Finally the encr
 Alice's directory (where Bob retrieves it from thus simulating the sending of the message to Bob).  
 
 After "enc" is called, "dec" can be called which of course stands for decrypt. This function is similar 
-to the encrypt one except Bob loads his own private kay, Alice's public key and the encrypted message. 
+to the encrypt one except Bob loads his own private key, Alice's public key and the encrypted message. 
 The decrypt function takes all these as arguments and uses the third part of Alice's public key,
 coprime^her_private mod group_prime, along with Bob's private number in his private key to calculate 
 the secret shared key. The decrypt function, of course, has to go one step further and calculate the 
