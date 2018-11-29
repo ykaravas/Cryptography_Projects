@@ -1,40 +1,14 @@
-#include <math.h>
 #include <iostream>
 #include <fstream>
 #include <limits.h>
 #include <string.h>
-#include <cstring>
-#include <string>
-#include <stdio.h>
-#include <stdlib.h>
 #include <time.h>
-#include <vector>
-#include <sstream>
 
 #include "CoreFunctions.h"
 #include "unittests.h"
 
 
 #define MAX_LENGTH 10000
-
-std::vector<int> readFile(std::string filename){
-
-    std::ifstream data(filename);
-    std::string line;
-    std::vector<int> prime_list;
-
-    while (std::getline(data, line)){
-
-        std::stringstream lineStream(line);
-
-        std::string cell;
-        while(std::getline(lineStream, cell, ',')){
-
-            prime_list.push_back(std::stoi(cell));
-        }
-    }
-    return prime_list;
-}
 
 
 int main() {
@@ -57,16 +31,23 @@ int main() {
         char decrypted_message_char[MAX_LENGTH] = {'\0'};
         long long int decrypted_message_long[MAX_LENGTH*4] = {0};
         std::cout << std::endl;
+        std::cout << "             MAIN PROGRAM FUNCTIONALITY & COMMAND LINE OPTIONS                  " << std::endl;
         std::cout << "------------------------------------------------------------------------------" << std::endl;
-        std::cout << "Operation Choices: 'gen' to generate key pairs" <<std::endl;
-        std::cout << "                   'enc' to encrypt message located in msg.txt" <<std::endl;
-        std::cout << "                   'dec' to decrypt message located in enc_msg.dat" << std::endl;
-        std::cout << "                   'eve' to intercept message with public key and find p & q" << std::endl;
-        std::cout << "                   'unit' to run unit tests" << std::endl;
-        std::cout << "                   'exit' to end program" << std::endl << std::endl << std::endl;
+        std::cout << "      'gen'           to generate key pairs for BOB and ALICE" <<std::endl;
+        std::cout << "      'enc'           to encrypt message located in 'config/msg.txt'" <<std::endl;
+        std::cout << "      'dec'           to decrypt message located in 'output/Alice/enc_msg.dat'" << std::endl;
+        std::cout << "      'eve'           to intercept ALICE message and BOB public key and find p & q" << std::endl;
+        std::cout << "      'msg'           to change message content in 'config/msg.txt' file." << std::endl;
+        std::cout << "      'unit'          to run all unit tests" << std::endl;
+        std::cout << "      'exit'          to end/exit program" << std::endl << std::endl << std::endl;
+        std::cout << "                       AUXILIARY FUNCTIONS" << std::endl;
+        std::cout << "------------------------------------------------------------------------------" << std::endl;
+        std::cout << "      'factor'        to factor a number into two primes (if possible)" << std::endl;
+        std::cout << "      'gcd'           to find gcd of two numbers" << std::endl;
+        std::cout << "      'prime'         to find if a number is prime or not" << std::endl;
+        std::cout << "      'modexp'        to perform fast exponentiation" << std::endl << std::endl << std::endl;
 
         std::cout << "Enter Desired Opertation: ";
-
 
         std::string input;
         std::cin >> input;
@@ -263,7 +244,6 @@ int main() {
             PrimeClass pq = brute_force_exec(group);
             privateKeyGen(pq.p, pq.q, &group, &brute_forced_private_key, intercepted_pub_key);
             std::cout << "EVE Brute Forced BOB Private key: " << brute_forced_private_key << std::endl;
-
             // Decrypt Alice's message
             std::ifstream encMesgFile;
 
@@ -293,6 +273,90 @@ int main() {
         else if (input == "unit") {
 
             unitTests();
+        }
+        else if (input == "factor") {
+
+            std::cout << "\nEnter a pq to be factored: ";
+            std::string num1;
+            std::cin >> num1;
+            std::cout << std::endl;
+
+            long long int num2;
+            num2 = std::stoll(num1);
+            PrimeClass pq = brute_force_exec(num2);
+
+            std::cout << "Prime factors of " << num2 << " are " << pq.p << " and " << pq.q << std::endl << std::endl;
+
+        }
+        else if (input == "gcd") {
+
+            std::cout << "\nEnter two numbers to find their gcd: ";
+            std::string num1, num2;
+            std::cin >> num1;
+            std::cin >> num2;
+            std::cout << std::endl;
+
+            long long int num3, num4;
+            num3 = std::stoll(num1);
+            num4 = std::stoll(num2);
+
+            long long int denominator = gcd(num3,num4);
+
+            std::cout << "GCD of " << num3 << " and " << num4 << " is " << denominator << std::endl << std::endl;
+
+        }
+        else if (input == "prime") {
+
+            std::cout << "\nEnter a number to find if it is prime or not: ";
+            std::string num1;
+            std::cin >> num1;
+            std::cout << std::endl;
+
+            long long int num2;
+            num2 = std::stoll(num1);
+
+            long long int is_prime = prime(num2);
+
+            if(is_prime == 0){
+
+                std::cout <<  num2 << " is prime."  << std::endl << std::endl;
+            }
+            else{
+                std::cout <<  num2 << " is not prime."  << std::endl << std::endl;
+
+            }
+        }
+        else if (input == "modexp") {
+
+            std::cout << "\nEnter three numbers, base, exponent and modulo to perform Fast Exp: ";
+            std::string num1, num2, num3;
+            std::cin >> num1;
+            std::cin >> num2;
+            std::cin >> num3;
+            std::cout << std::endl;
+
+            long long int num4, num5, num6;
+            num4 = std::stoll(num1);
+            num5 = std::stoll(num2);
+            num6 = std::stoll(num3);
+
+            long long int out = fastExponentiation(num4,num5, num6);
+
+            std::cout << "Fast Exponentiation output of Base: " << num4 << ",  Exponent: " << num5
+                      << ",  Modulo: " << num6 << " is " << out << std::endl << std::endl;
+
+        }
+        else if (input == "msg"){
+
+            std::cout << "\nEnter new message for the 'config/msg.txt' file: ";
+            std::string new_msg;
+            std::cin >> new_msg;
+
+            std::ofstream msg_txt;
+            msg_txt.open("../config/msg.txt");
+            msg_txt << new_msg;
+            msg_txt.close();
+
         }
         else if (input == "exit") {
 

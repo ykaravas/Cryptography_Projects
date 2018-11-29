@@ -112,7 +112,41 @@ void unitTests(){
     }
 
 
+    pass = true;
+    std::vector<int> prime_list = readFile("../config/primes.txt");
 
+    long long int brute_forced_private_key;
+    long long int intercepted_public_key;
+
+    int i = 0;
+    while(i < 15){
+
+        srand (time(NULL));
+
+        int first = rand() % prime_list.size();
+        int second = rand() % prime_list.size();
+
+        p = prime_list.at(first);
+        q = prime_list.at(second);
+
+        //Generate public and private keys from p and q
+        publicKeyGen(p, q, &z_group, &intercepted_public_key);
+        //std::cout << "ALICE public key: " << intercepted_public_key << ", " << z_group << std::endl;
+        privateKeyGen(p, q, &z_group, &private_key, intercepted_public_key);
+        //std::cout << "ALICE private key: " << private_key << ", " << z_group << std::endl << std::endl;
+
+        PrimeClass pq = brute_force_exec(z_group);
+        privateKeyGen(pq.p, pq.q, &z_group, &brute_forced_private_key, intercepted_public_key);
+
+        if(brute_forced_private_key != private_key){
+            std::cout << "FULL TEST FAILED" << std::endl;
+            pass = false;
+            break;
+        }
+    }
+    if(pass){
+        std::cout << "FACTORING TEST SUCCESS" << std::endl;
+    }
     /*
     prime(long long int is_prime); // (num is_prime?)
     gcd(long long int p, long long int q); // (num1 num2 gcdnum)

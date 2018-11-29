@@ -11,7 +11,7 @@ OUTPUT_DIR = ./output
 
 CC = g++-4.8
 CXX = g++
-CXXFLAGS =  -m64 -std=c++11 -Wall -I$(INC_DIR)
+CXXFLAGS =  -m64 -std=c++11 -Wall -g -I$(INC_DIR)
 EXPENDABLES = PrimeClass.o RSA.o CoreFunctions.o unittests.o RSA
 
 

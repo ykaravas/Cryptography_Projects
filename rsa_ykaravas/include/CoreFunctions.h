@@ -1,9 +1,10 @@
 #ifndef COREFUNCTIONS_H
 #define COREFUNCTIONS_H
 
+#include <vector>
+#include <string>
+
 #include "PrimeClass.h"
-
-
 
 
 long long int prime(long long int is_prime);
@@ -14,6 +15,7 @@ long long int privateKeyGen(long long int p, long long int q, long long int *mod
 int encrypt(long long int* in, long long int exponent, long long int modulo, long long int* encrypted_msg_segment, size_t len);
 int decrypt(long long int* in, long long int exponent, long long int modulo, long long int* decrypted_msg_segment, size_t len);
 PrimeClass brute_force_exec(long long int group);
+std::vector<int> readFile(std::string filename);
 
 
 // Helper functions

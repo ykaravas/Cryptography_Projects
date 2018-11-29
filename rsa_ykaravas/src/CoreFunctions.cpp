@@ -1,8 +1,31 @@
 #include <math.h>
 #include <iostream>
 #include <limits.h>
+#include <sstream>
+#include <fstream>
 
 #include "CoreFunctions.h"
+
+
+
+std::vector<int> readFile(std::string filename){
+
+    std::ifstream data(filename);
+    std::string line;
+    std::vector<int> prime_list;
+
+    while (std::getline(data, line)){
+
+        std::stringstream lineStream(line);
+
+        std::string cell;
+        while(std::getline(lineStream, cell, ',')){
+
+            prime_list.push_back(std::stoll(cell));
+        }
+    }
+    return prime_list;
+}
 
 
 PrimeClass brute_force_exec(long long int group) {
