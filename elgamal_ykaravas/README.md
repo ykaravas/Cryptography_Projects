@@ -69,22 +69,28 @@ to run above commands with python<version_num> file.py instead. e.g. python3.5 e
 
 When program is started, you shoud see the following:
 
-	Possible Commands:
 
-			  gen - This will prompt user for a large prime number. Can also
-					type 'rand' instead of a large prime which will choose
-					prime from primes.txt file in Generated_Files directory.
-			  enc - Alice will encrypt original_msg.txt in her directory
-			  dec - Bob will decrypt the message previously encrypted by Alice
-			  eve - Eve will simulate MITM attack by taking Alice's Public key
-					and encrypted message and cracking them.
-			  msg - Change message in 'Generated_Files/Alice/original_msg.txt' file.
-			purge - Remove all files except Generated_Files/Alice/original_msg.txt
-					and Generated_Files/primes.txt
-			 exit - Will exit program
+	               MAIN PROGRAM FUNCTIONALITY & COMMAND LINE OPTIONS:
+	---------------------------------------------------------------------------------
+			  gen  		This will prompt user for a large prime number. Can also
+			      		type 'rand' instead of a large prime which will choose
+			        	prime from prime.txt file in Generated_Files directory.
+			  enc  		Alice will encrypt original_msg.txt in her directory
+			  dec   	Bob will decrypt the message previously encrypted by Alice
+			  eve   	Eve will simulate MITM attack by taking Alice's Public key
+			        	and encrypted message and cracking them.
+			  msg   	to change message in 'Generated_Files/Alice/original_msg.txt' file.
+			purge   	to remove all files except original_msg.txt and primes.txt
+			 exit   	to terminate program
+			 
+	                             AUXILIARY FUNCTIONS
+	---------------------------------------------------------------------------------
+			  gcd   	to find gcd of two numbers
+			prime   	to find if a number is prime or not
+			modexp  	to perform fast exponentiation
 
 
-	Enter Desired Command: 
+Enter Desired Command: 
 
 
 All the necessary commands are explained above. Note that "enc" must be run at least once
@@ -159,6 +165,11 @@ be run separately using the command given above.
 This description was written prior to any collaboration with my team yet. As one can imagine, however,
 the process my program will undergo during the collaboration process will be identical aside from 
 manual replacement of keys and messages with those provided by my project mates. 
+
+There are also three other commands I have added in order to make the building blocks/functions of the 
+overall project a bit more accessible. These include "prime", to check if a number is prime, "gcd" to find the 
+greatest common denominator of two numbers entered by the user and finally "modexp" which takes three
+arguments, base, exponent and modulo and performs modular exponentiation (base^exponent)%modulo.
 
 
 
