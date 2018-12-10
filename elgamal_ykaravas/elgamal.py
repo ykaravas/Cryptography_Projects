@@ -306,7 +306,14 @@ def run():
 		if command == "gen":
 			num_bits = input('Enter Number of bits: ')
 			# User input of large prime.
-
+			inputs = True
+			while(inputs):
+				if (int(num_bits) % 2 != 0) or int(num_bits) < 20:
+					print("\nNumber of bits was either odd or not larger than 20.\n")
+					num_bits = input('Enter Number of bits: ')
+				else:
+					inputs = False
+					
 			BBS = BlumBlumShub(int(num_bits))
 			large_prime = BBS.next(int(num_bits))
 
