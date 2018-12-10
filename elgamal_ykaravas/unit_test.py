@@ -1,6 +1,6 @@
 import unittest
 import elgamal
-
+from BBS import millerRabin
 
 ######## UNIT TEST FUNCTIONS ########
 
