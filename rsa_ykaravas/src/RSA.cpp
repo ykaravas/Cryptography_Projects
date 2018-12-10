@@ -4,6 +4,7 @@
 #include <string.h>
 #include <time.h>
 
+#include "BBS.h"
 #include "CoreFunctions.h"
 #include "unittests.h"
 
@@ -16,20 +17,20 @@ int main() {
 
     while(1) {
 
-        long long int bob_public_key;
-        long long int bob_private_key;
-        long long int bob_z_group;
-        long long int alice_public_key;
-        long long int alice_private_key;
-        long long int alice_z_group;
-        long long int brute_forced_private_key;
+        uint64_t bob_public_key;
+        uint64_t bob_private_key;
+        uint64_t bob_z_group;
+        uint64_t alice_public_key;
+        uint64_t alice_private_key;
+        uint64_t alice_z_group;
+        uint64_t brute_forced_private_key;
 
         char message_to_encrypt_char[MAX_LENGTH] = {'\0'};
-        long long int message_to_encrypt_long[MAX_LENGTH*4] = {0};
+        uint64_t message_to_encrypt_long[MAX_LENGTH*4] = {0};
         char message_to_decrypt_char[MAX_LENGTH] = {'\0'};
-        long long int message_to_decrypt_long[MAX_LENGTH*4] = {0};
+        uint64_t message_to_decrypt_long[MAX_LENGTH*4] = {0};
         char decrypted_message_char[MAX_LENGTH] = {'\0'};
-        long long int decrypted_message_long[MAX_LENGTH*4] = {0};
+        uint64_t decrypted_message_long[MAX_LENGTH*4] = {0};
         std::cout << std::endl;
         std::cout << "             MAIN PROGRAM FUNCTIONALITY & COMMAND LINE OPTIONS                  " << std::endl;
         std::cout << "------------------------------------------------------------------------------" << std::endl;
@@ -54,7 +55,7 @@ int main() {
 
         if(input == "gen"){
 
-            std::cout << "\nType c to use Config file or r for random primes: ";
+            std::cout << "\nType c to use Config file or r for random primes from primes.txt \n or b for BlumBlumShub: ";
 
 
             std::string input2;
@@ -103,13 +104,36 @@ int main() {
 
             }
 
+            else if(input2 == "b" || input2 == "B"){
 
-            if (prime(alice_primes.first) || prime(alice_primes.first)) {
+                std::cout << "Enter Number if Bits Desired: ";
+
+                std::string input;
+                std::cin >> input;
+
+                unsigned int bits = std::stoi(input);
+
+                BBS bbs_bob = BBS(bits);
+
+                bob_primes.first =  bbs_bob.next(bits);
+                bob_primes.second =  bbs_bob.next(bits);
+
+                std::cout << "BOB Primes are P = " << bob_primes.first << " and Q = " << bob_primes.second << std::endl << std::endl;
+
+                BBS bbs_alice = BBS(bits);
+                alice_primes.first =  bbs_alice.next(bits);
+                alice_primes.second =  bbs_alice.next(bits);
+
+                std::cout << "ALICE Primes are P = " << alice_primes.first << " and Q = " << alice_primes.second << std::endl << std::endl;
+
+            }
+
+            if (!(isPrime(alice_primes.first,100) || isPrime(alice_primes.first,100))) {
 
                 std::cerr << "ALICE primes are invalid." << std::endl;
                 return 1;
             }
-            if (prime(bob_primes.first) || prime(bob_primes.first)) {
+            if (!(isPrime(bob_primes.first,100) || isPrime(bob_primes.first,100))) {
 
                 std::cerr << "BOB primes are invalid." << std::endl;
                 return 1;
@@ -162,14 +186,14 @@ int main() {
 
             //Encrypt, then decrypt the message
             std::cout << "ALICE Original message: " << message_to_encrypt_char << std::endl;
-            convertChar2Long(message_to_encrypt_char, message_to_encrypt_long,true);
+            convertChar2Long(message_to_encrypt_char, message_to_encrypt_long,false);
 
 
             //Encrypt
             std::ifstream pubkey;
             pubkey.open("../output/Bob/pub_key.txt");
-            long long int key;
-            long long int group;
+            uint64_t key;
+            uint64_t group;
             pubkey >> key >> group;
 
             if(key == 0){
@@ -180,7 +204,7 @@ int main() {
             }
 
             encrypt(message_to_encrypt_long, key, group, message_to_decrypt_long, len*4);
-            convertLong2Char(message_to_decrypt_long, message_to_decrypt_char,true);
+            convertLong2Char(message_to_decrypt_long, message_to_decrypt_char,false);
             std::cout << "ALICE Encrypted message to BOB: " << message_to_decrypt_char << std::endl;
             std::ofstream enc_msg_txt;
 
@@ -208,8 +232,8 @@ int main() {
 
             std::ifstream privkey;
             privkey.open("../output/Bob/priv_key.txt");
-            long long int key;
-            long long int group;
+            uint64_t key;
+            uint64_t group;
             privkey >> key >> group;
 
             if(key == 0) {
@@ -221,7 +245,7 @@ int main() {
 
             decrypt(message_to_decrypt_long, key, group, decrypted_message_long, MAX_LENGTH*4);
 
-            convertLong2Char(decrypted_message_long, decrypted_message_char,true);
+            convertLong2Char(decrypted_message_long, decrypted_message_char,false);
             std::cout << "BOB Decrypted ALICE message: " << decrypted_message_char << std::endl;
             std::ofstream dec_msg_txt;
             dec_msg_txt.open("../output/Bob/dec_msg.txt");
@@ -232,8 +256,8 @@ int main() {
 
             std::ifstream pubkey;
             pubkey.open("../output/Bob/pub_key.txt");
-            long long int intercepted_pub_key;
-            long long int group;
+            uint64_t intercepted_pub_key;
+            uint64_t group;
             pubkey >> intercepted_pub_key >> group;
             if((intercepted_pub_key == 0) && (group == 0)){
                 std::cout << std::endl << std::endl
@@ -255,7 +279,7 @@ int main() {
             encMesgFile.close();
             decrypt(message_to_decrypt_long, brute_forced_private_key, group, decrypted_message_long, MAX_LENGTH*4);
 
-            convertLong2Char(decrypted_message_long, decrypted_message_char,true);
+            convertLong2Char(decrypted_message_long, decrypted_message_char,false);
             std::cout << "EVE Decrypted ALICE message to BOB: " << decrypted_message_char << std::endl;
             std::ofstream dec_msg_txt;
             dec_msg_txt.open("../output/Eve/intercepted_msg.txt");
@@ -281,7 +305,7 @@ int main() {
             std::cin >> num1;
             std::cout << std::endl;
 
-            long long int num2;
+            uint64_t num2;
             num2 = std::stoll(num1);
             PrimeClass pq = brute_force_exec(num2);
 
@@ -296,11 +320,11 @@ int main() {
             std::cin >> num2;
             std::cout << std::endl;
 
-            long long int num3, num4;
+            uint64_t num3, num4;
             num3 = std::stoll(num1);
             num4 = std::stoll(num2);
 
-            long long int denominator = gcd(num3,num4);
+            uint64_t denominator = gcd(num3,num4);
 
             std::cout << "GCD of " << num3 << " and " << num4 << " is " << denominator << std::endl << std::endl;
 
@@ -312,10 +336,10 @@ int main() {
             std::cin >> num1;
             std::cout << std::endl;
 
-            long long int num2;
+            uint64_t num2;
             num2 = std::stoll(num1);
 
-            long long int is_prime = prime(num2);
+            uint64_t is_prime = isPrime(num2,100);
 
             if(is_prime == 0){
 
@@ -335,12 +359,12 @@ int main() {
             std::cin >> num3;
             std::cout << std::endl;
 
-            long long int num4, num5, num6;
+            uint64_t num4, num5, num6;
             num4 = std::stoll(num1);
             num5 = std::stoll(num2);
             num6 = std::stoll(num3);
 
-            long long int out = fastExponentiation(num4,num5, num6);
+            uint64_t out = fastExponentiation(num4,num5, num6);
 
             std::cout << "Fast Exponentiation output of Base: " << num4 << ",  Exponent: " << num5
                       << ",  Modulo: " << num6 << " is " << out << std::endl << std::endl;

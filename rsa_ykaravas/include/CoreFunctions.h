@@ -3,24 +3,28 @@
 
 #include <vector>
 #include <string>
+#include <cstdint>
 
 #include "PrimeClass.h"
 
 
-long long int prime(long long int is_prime);
-long long int gcd(long long int p, long long int q);
-long long int fastExponentiation(long long int base, long long int exponent, long long int modulo);
-long long int publicKeyGen(long long int p, long long int q, long long int *modulo, long long int *exponent);
-long long int privateKeyGen(long long int p, long long int q, long long int *modulo, long long int *exponent, long long int pub);
-int encrypt(long long int* in, long long int exponent, long long int modulo, long long int* encrypted_msg_segment, size_t len);
-int decrypt(long long int* in, long long int exponent, long long int modulo, long long int* decrypted_msg_segment, size_t len);
-PrimeClass brute_force_exec(long long int group);
+//uint64_t prime(uint64_t is_prime);
+uint64_t gcd(uint64_t p, uint64_t q);
+uint64_t fastExponentiation(uint64_t base, uint64_t exponent, uint64_t modulo);
+uint64_t publicKeyGen(uint64_t p, uint64_t q, uint64_t *modulo, uint64_t *exponent);
+uint64_t privateKeyGen(uint64_t p, uint64_t q, uint64_t *modulo, uint64_t *exponent, uint64_t pub);
+int encrypt(uint64_t* in, uint64_t exponent, uint64_t modulo, uint64_t* encrypted_msg_segment, size_t len);
+int decrypt(uint64_t* in, uint64_t exponent, uint64_t modulo, uint64_t* decrypted_msg_segment, size_t len);
+PrimeClass brute_force_exec(uint64_t group);
 std::vector<int> readFile(std::string filename);
+bool isPrime(uint64_t n, uint64_t k);
+bool millerTest(uint64_t d, uint64_t n);
+uint64_t power(uint64_t x, uint64_t y, uint64_t p);
 
 
 // Helper functions
 
-int convertChar2Long(char* char_in, long long int* long_out, bool rand_in);
-int convertLong2Char(long long int* long_in, char* char_out, bool sub);
+int convertChar2Long(char* char_in, uint64_t* long_out, bool rand_in);
+int convertLong2Char(uint64_t* long_in, char* char_out, bool sub);
 
 #endif // COREFUNCTIONS_H

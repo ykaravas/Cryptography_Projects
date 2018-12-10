@@ -4,7 +4,7 @@
 #include "PrimeClass.h"
 
 
-PrimeClass::PrimeClass( long long int num ) {
+PrimeClass::PrimeClass( uint64_t num ) {
     n = num;
     p = 0;
     q = 0;
@@ -12,11 +12,11 @@ PrimeClass::PrimeClass( long long int num ) {
 }
 
 
-inline void PrimeClass::findFactor(long long int start) {
+inline void PrimeClass::findFactor(uint64_t start) {
 
-    long long int local = n;
+    uint64_t local = n;
     // Unravel loop a bit
-    for (long long int i = start; i < n_sqrt; i += 10) {
+    for (uint64_t i = start; i < n_sqrt; i += 10) {
 
         if (p != 0 ){
             return;
@@ -48,7 +48,7 @@ inline void PrimeClass::findFactor(long long int start) {
 
 void PrimeClass::bruteForce(){
 
-    long long int start = 3;
+    uint64_t start = 3;
 
     findFactor(start);
 

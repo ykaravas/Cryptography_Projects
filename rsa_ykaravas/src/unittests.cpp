@@ -2,6 +2,7 @@
 #include <fstream>
 #include <cstring>
 
+#include "BBS.h"
 #include "PrimeClass.h"
 #include "CoreFunctions.h"
 
@@ -10,7 +11,7 @@ void unitTests(){
 
     std::ifstream gcd_file;
     gcd_file.open("../testFiles/num1_num2_gcd.txt");
-    long long int num1, num2, gcd_num;
+    uint64_t num1, num2, gcd_num;
     gcd_file >> num1 >> num2 >> gcd_num;
     bool pass = true;
     while(num1 != 0 || num2 != 0){
@@ -31,14 +32,15 @@ void unitTests(){
     pass = true;
     std::ifstream is_it_prime_file;
     is_it_prime_file.open("../testFiles/num_isitprime.txt");
-    long long int is_prime;
+    uint64_t is_prime;
     is_it_prime_file >> num1 >> is_prime;
 
     while(num1 != 0){
 
-        int temp = prime(num1);
-        int check = temp + is_prime;
-        if((is_prime > check) || (temp > check)){
+        bool temp = isPrime(num1,100);
+        //int check = temp + is_prime;
+        //if((is_prime > check) || (temp > check)){
+        if(!temp && is_prime){
             std::cout << "PRIME UNIT TEST FAILED" << std::endl;
             pass = false;
         }
@@ -50,20 +52,25 @@ void unitTests(){
 
     is_it_prime_file.close();
 
+    //BBS bbs = BBS(32);
+
+    //uint64_t a = bbs.getPrime(32);
+    //uint64_t b =  bbs.next(32);
+
 #define MAX_LENGTH 10000
 
 
-    long long int p;
-    long long int q;
-    long long int public_key;
-    long long int private_key;
-    long long int z_group;
+    uint64_t p;
+    uint64_t q;
+    uint64_t public_key;
+    uint64_t private_key;
+    uint64_t z_group;
 
     char message_to_encrypt_char[MAX_LENGTH];
-    long long int message_to_encrypt_long[MAX_LENGTH*4];
-    long long int message_to_decrypt_long[MAX_LENGTH*4];
+    uint64_t message_to_encrypt_long[MAX_LENGTH*4];
+    uint64_t message_to_decrypt_long[MAX_LENGTH*4];
     char decrypted_message_char[MAX_LENGTH];
-    long long int decrypted_message_long[MAX_LENGTH*4];
+    uint64_t decrypted_message_long[MAX_LENGTH*4];
 
     pass = true;
     std::ifstream pq_file;
@@ -115,8 +122,8 @@ void unitTests(){
     pass = true;
     std::vector<int> prime_list = readFile("../config/primes.txt");
 
-    long long int brute_forced_private_key;
-    long long int intercepted_public_key;
+    uint64_t brute_forced_private_key;
+    uint64_t intercepted_public_key;
 
     int i = 0;
     while(i < 15){
@@ -148,14 +155,14 @@ void unitTests(){
         std::cout << "FACTORING TEST SUCCESS" << std::endl;
     }
     /*
-    prime(long long int is_prime); // (num is_prime?)
-    gcd(long long int p, long long int q); // (num1 num2 gcdnum)
-    fastExponentiation(long long int base, long long int exponent, long long int modulo); // (prime1 prime2, n)
-    publicKeyGen(long long int p, long long int q, long long int *modulo, long long int *exponent); // (p q pub_key)
-    privateKeyGen(long long int p, long long int q, long long int *modulo, long long int *exponent, long long int pub); // (p q pub_key priv_key)
-    encrypt(long long int* in, long long int exponent, long long int modulo, long long int* encrypted_msg_segment, size_t len); // (msg hash)
-    decrypt(long long int* in, long long int exponent, long long int modulo, long long int* decrypted_msg_segment, size_t len); // (hash msg)
-    brute_force_exec(long long int group); // (prime1 prime2, n)
+    prime(uint64_t is_prime); // (num is_prime?)
+    gcd(uint64_t p, uint64_t q); // (num1 num2 gcdnum)
+    fastExponentiation(uint64_t base, uint64_t exponent, uint64_t modulo); // (prime1 prime2, n)
+    publicKeyGen(uint64_t p, uint64_t q, uint64_t *modulo, uint64_t *exponent); // (p q pub_key)
+    privateKeyGen(uint64_t p, uint64_t q, uint64_t *modulo, uint64_t *exponent, uint64_t pub); // (p q pub_key priv_key)
+    encrypt(uint64_t* in, uint64_t exponent, uint64_t modulo, uint64_t* encrypted_msg_segment, size_t len); // (msg hash)
+    decrypt(uint64_t* in, uint64_t exponent, uint64_t modulo, uint64_t* decrypted_msg_segment, size_t len); // (hash msg)
+    brute_force_exec(uint64_t group); // (prime1 prime2, n)
     */
 
 }
