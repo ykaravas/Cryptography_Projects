@@ -139,7 +139,7 @@ void unitTests(){
         privateKeyGen(pq.p, pq.q, &z_group, &brute_forced_private_key, intercepted_public_key);
 
         if(brute_forced_private_key != private_key){
-            std::cout << "FULL TEST FAILED" << std::endl;
+            std::cout << "FACTORING TEST FAILED" << std::endl;
             pass = false;
             break;
         }

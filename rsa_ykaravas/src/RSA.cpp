@@ -162,7 +162,7 @@ int main() {
 
             //Encrypt, then decrypt the message
             std::cout << "ALICE Original message: " << message_to_encrypt_char << std::endl;
-            convertChar2Long(message_to_encrypt_char, message_to_encrypt_long,false);
+            convertChar2Long(message_to_encrypt_char, message_to_encrypt_long,true);
 
 
             //Encrypt
@@ -180,7 +180,7 @@ int main() {
             }
 
             encrypt(message_to_encrypt_long, key, group, message_to_decrypt_long, len*4);
-            convertLong2Char(message_to_decrypt_long, message_to_decrypt_char,false);
+            convertLong2Char(message_to_decrypt_long, message_to_decrypt_char,true);
             std::cout << "ALICE Encrypted message to BOB: " << message_to_decrypt_char << std::endl;
             std::ofstream enc_msg_txt;
 
@@ -221,7 +221,7 @@ int main() {
 
             decrypt(message_to_decrypt_long, key, group, decrypted_message_long, MAX_LENGTH*4);
 
-            convertLong2Char(decrypted_message_long, decrypted_message_char,false);
+            convertLong2Char(decrypted_message_long, decrypted_message_char,true);
             std::cout << "BOB Decrypted ALICE message: " << decrypted_message_char << std::endl;
             std::ofstream dec_msg_txt;
             dec_msg_txt.open("../output/Bob/dec_msg.txt");
@@ -255,7 +255,7 @@ int main() {
             encMesgFile.close();
             decrypt(message_to_decrypt_long, brute_forced_private_key, group, decrypted_message_long, MAX_LENGTH*4);
 
-            convertLong2Char(decrypted_message_long, decrypted_message_char,false);
+            convertLong2Char(decrypted_message_long, decrypted_message_char,true);
             std::cout << "EVE Decrypted ALICE message to BOB: " << decrypted_message_char << std::endl;
             std::ofstream dec_msg_txt;
             dec_msg_txt.open("../output/Eve/intercepted_msg.txt");
