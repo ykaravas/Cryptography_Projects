@@ -72,9 +72,8 @@ When program is started, you shoud see the following:
 
 	               MAIN PROGRAM FUNCTIONALITY & COMMAND LINE OPTIONS:
 	---------------------------------------------------------------------------------
-			  gen  		This will prompt user for a large prime number. Can also
-			      		type 'rand' instead of a large prime which will choose
-			        	prime from prime.txt file in Generated_Files directory.
+			  gen  		This will generate keys for Alice and Bob using BBS. Alice
+			      		is the one who "posts" her choices for Bob to use.
 			  enc  		Alice will encrypt original_msg.txt in her directory
 			  dec   	Bob will decrypt the message previously encrypted by Alice
 			  eve   	Eve will simulate MITM attack by taking Alice's Public key
@@ -99,24 +98,61 @@ creation/exchange. Purge will delete all files in actor directories except for A
 original_msg.txt. The program can handle any input to be encrypted. Program will run on loop 
 until exit command is executed.
 
+**Functions**
+
+I/O Helper Functions:
+
+	- Read key or Message from File: readKeyOrMsg
+	- Write key or message to file: writeKeyOrMsg
+	- Displays options to user in terminal: displayOptions
+	- Remove all files generated during execution: cleanFiles
+	- Helper Function to allow strings as input: convertBytes2Ints
+	- Helper Function to allow strings as input: convertInts2Bytes
+
+
+Math/Crypto Helper Functions:
+
+	- Calculate the number of bits in number: calcNumBits
+	- Fast modular Exponentiation: fastModular
+	- Get the secret key: getSecret
+	- Get the multiplicative inverse of secret key: getMultInv
+	- Find primitive Root: findPrimitiveRoot
+	- Find GCD: gcd
+
+
+Core Functions:
+
+	- Generate Alice and Bob's keys: generateKeys
+	- Factorization algorithm: bigStepLittleStep
+	- Primality testing function: millerRabin
+	- BlumBlumShub (BBS.py) function used internally to generate prime: getPrime
+	- BlumBlumShub (BBS.py) function used internally to generate Large N: generateGroupN
+	- BlumBlumShub (BBS.py) function to calculate number of bits: calcBits
+	- BlumBlumShub (BBS.py) function used to obtain random prime: next
+	- Core function used to encrypt: encrypt
+	- Core function used to decrypt: decrypt
+	- Main worker function which runs in loop: run
+	- Main execution function: main
+
 
 **Description**
 
 
-The first command that should be run is "gen" which stands for generate. The user will then be 
-prompted to either manually type a large prime number or alternatively type "rand" which will
-query a static text file in Generated_Files directory filled with large primes. Program will
-then check to make sure the number is in fact a prime and is at least 8 bits. The program then
-simulates Alice using the large prime to generate her public and private keys using a function 
-called generateKeys. When Alice generates her keys, she does not pass the optional primitive root
-argument to the generate function but rather the function chooses one using a findPrimitiveRoot
-function along with a moduloExponent function. Bob will later use this same coprime to generate
-his keys. This function generates Alice's public key which consists of the original large prime,
-which represents the group, a coprime, and the same raised to the power of her secret number mod 
-the large prime. Note that is this function of course also chooses her random integer from the group
-over the large prime. The private key consists of the large prime, coprime and secret key. 
+The first command that should be run is "gen" which stands for generate. The User will be prompted
+to enter the number of bits to use in key generation for size of N. The program will then check to 
+make sure the bit number entered is evenand is at least 20 bits. This bit number is used to generate
+a large N along with Alice and Bob's private numbers using BlumBlumShub. The program then simulates Alice 
+using the large N to generate her public and private keys using a function called generateKeys. 
+When Alice generates her keys, she does not pass the optional primitive root argument to the generate 
+function but rather the function chooses one using a findPrimitiveRoot function along with a 
+moduloExponent function. Bob will later use this same coprime to generate his keys. This function 
+generates Alice's public key which consists of the original large N, which represents the group, 
+a coprime, and the same raised to the power of her secret number mod the large N. Note that is 
+this function of course also chooses her random integer from the group over the large N. The private 
+key consists of the large N, coprime and secret key. Note* BlumBlumShub is used for generation of 
+random primes in the key generation scheme. Miller Rabin is used to test primality.
 
-This process is repeated for Bob with the minor difference, however, that Bob uses the large prime
+This process is repeated for Bob with the minor difference, however, that Bob uses the group number
 along with the coprime that Alice has "published" in order to generate his keys. Their keys are saved
 in the Generated_Files/Alice and Generated_Files/Bob directories, respectively. Alice's directory
 also starts out with the original_msg.txt file which can be edited manually or via the "msg" 

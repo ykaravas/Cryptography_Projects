@@ -15,16 +15,16 @@ class calcNumBitsTests(unittest.TestCase):
 
 class isPrimeTests(unittest.TestCase):
     def test_general(self):
-        self.assertEqual(elgamal.isPrime(0), False)
-        self.assertEqual(elgamal.isPrime(1), False)
-        self.assertEqual(elgamal.isPrime(2), True)
-        self.assertEqual(elgamal.isPrime(3), True)
-        self.assertEqual(elgamal.isPrime(961751663), True)
-        self.assertEqual(elgamal.isPrime(1000000003273), True)
-        self.assertEqual(elgamal.isPrime(100000), False)
-        self.assertEqual(elgamal.isPrime(16), False)
-        self.assertEqual(elgamal.isPrime(17), True)
-        self.assertEqual(elgamal.isPrime(29), True)
+        self.assertEqual(elgamal.millerRabin(0, 100), False)
+        self.assertEqual(elgamal.millerRabin(1, 100), False)
+        self.assertEqual(elgamal.millerRabin(2, 100), True)
+        self.assertEqual(elgamal.millerRabin(3, 100), True)
+        self.assertEqual(elgamal.millerRabin(961751663, 100), True)
+        self.assertEqual(elgamal.millerRabin(1000000003273, 100), True)
+        self.assertEqual(elgamal.millerRabin(100000, 100), False)
+        self.assertEqual(elgamal.millerRabin(16, 100), False)
+        self.assertEqual(elgamal.millerRabin(17, 100), True)
+        self.assertEqual(elgamal.millerRabin(29, 100), True)
     
 class getMultInvTests(unittest.TestCase):
     def test_general(self):

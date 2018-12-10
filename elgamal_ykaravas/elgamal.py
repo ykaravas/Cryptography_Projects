@@ -22,78 +22,6 @@ class private_key(object):
 		self.priv_num = priv_num
 		self.num_bits = num_bits
 
-
-######## HELPER FUNCTIONS ########
-
-def modularExp(base, exp, modulus):
-	return pow(base, exp, modulus)
-
-	
-def fastModular(base,exp,mod):
-    b = base
-    e = exp
-    fin = 1
-    while e > 0:
-        if e % 2 == 0:
-            b = (b * b) % mod
-            e = e/2
-        else:
-            fin = (b * fin) % mod
-            e = e - 1
-    return fin
-	
-
-def calcNumBits(prime_num):
-    return math.ceil(math.log(prime_num, 2))
-
-
-# def isPrime(num):
-# 	if ((num == 2) or (num == 3)):
-# 		return True
-# 	if (((num % 2) == 0) or (num < 2)):
-# 		return False
-# 	for i in range(3, int(num ** 0.5) + 1, 2):
-# 		if ((num % i) == 0):
-# 			return False    
-			
-# 	return True
-
-
-def getSecret(pubkey, own_privkey):
-	group_n = pubkey.group_n
-	secret_key = fastModular(pubkey.prim_rt_exp_priv, own_privkey.priv_num, group_n)
-	return secret_key
-
-
-def getMultInv(pubkey, own_privkey):
-	group_n = pubkey.group_n
-	secret_key = getSecret(pubkey, own_privkey)
-	secret_key_inv = pow(secret_key, group_n - 2, group_n)
-	return secret_key_inv
-
-def gcd(a, b):
-	while b != 0:
-		c = a % b
-		a = b
-		b = c
-	#a is returned if b == 0
-	return a
-
-
-def findPrimitiveRoot(num):
-    	
- 	temp1 = 2
- 	temp2 = (num - 1) // temp1
-
- 	if num == 2:
- 		return 1
-
- 	while(1):
- 		possible_prim_root = random.randint( 2, num-1 )
- 		if not (fastModular(possible_prim_root, (num-1) // temp1, num) == 1):
- 			if not (fastModular(possible_prim_root, (num-1) // temp2, num) == 1):
- 				return possible_prim_root
-
 			
 ######## HELPER I/O FUNCTIONS ########
 
@@ -167,7 +95,8 @@ def cleanFiles():
 	print("\nTXT FILES IN ACTORS DIRECTORIES CLEANED\n")
 
 
-######## CORE FUNCTIONS ########
+######## HELPER FUNCTIONS ########
+
 
 # Convert bytes of message to ints in order to encrypt.
 def convertBytes2Ints(msg, num_bits):
@@ -211,6 +140,62 @@ def convertInts2Bytes(msg, num_bits):
 
 	return converted_msg
 
+
+def fastModular(base,exp,mod):
+    b = base
+    e = exp
+    fin = 1
+    while e > 0:
+        if e % 2 == 0:
+            b = (b * b) % mod
+            e = e/2
+        else:
+            fin = (b * fin) % mod
+            e = e - 1
+    return fin
+	
+
+def calcNumBits(prime_num):
+    return math.ceil(math.log(prime_num, 2))
+
+
+def getSecret(pubkey, own_privkey):
+	group_n = pubkey.group_n
+	secret_key = fastModular(pubkey.prim_rt_exp_priv, own_privkey.priv_num, group_n)
+	return secret_key
+
+
+def getMultInv(pubkey, own_privkey):
+	group_n = pubkey.group_n
+	secret_key = getSecret(pubkey, own_privkey)
+	secret_key_inv = pow(secret_key, group_n - 2, group_n)
+	return secret_key_inv
+
+def gcd(a, b):
+	while b != 0:
+		c = a % b
+		a = b
+		b = c
+	#a is returned if b == 0
+	return a
+
+
+def findPrimitiveRoot(num):
+    	
+ 	temp1 = 2
+ 	temp2 = (num - 1) // temp1
+
+ 	if num == 2:
+ 		return 1
+
+ 	while(1):
+ 		possible_prim_root = random.randint( 2, num-1 )
+ 		if not (fastModular(possible_prim_root, (num-1) // temp1, num) == 1):
+ 			if not (fastModular(possible_prim_root, (num-1) // temp2, num) == 1):
+ 				return possible_prim_root
+
+
+######## CORE FUNCTIONS ########
 
 # Generate pub and priv keys.
 def generateKeys(large_prime, bbs, published_prim_root = 0):
