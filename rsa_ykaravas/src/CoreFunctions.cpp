@@ -228,57 +228,38 @@ uint64_t gcd(uint64_t p, uint64_t q) {
 }
 
 
+uint64_t powr(uint64_t x, uint64_t y, uint64_t p){
 
+    uint64_t res = 1;
+    x = x % p;
 
-
-
-
-// Utility function to do modular exponentiation.
-// It returns (x^y) % p
-uint64_t power(uint64_t x, uint64_t y, uint64_t p){
-
-    uint64_t res = 1;	 // Initialize result
-    x = x % p; // Update x if it is more than or
-                // equal to p
-    while (y > 0)
-    {
-        // If y is odd, multiply x with result
+    while (y > 0){
+        // multiply x with result if y is odd
         if (y & 1){
             res = (res*x) % p;
         }
 
-        // y must be even now
+        // y even
         y = y>>1; // y = y/2
         x = (x*x) % p;
     }
     return res;
 }
 
-// This function is called for all k trials. It returns
-// false if n is composite and returns false if n is
-// probably prime.
-// d is an odd number such that d*2<sup>r</sup> = n-1
-// for some r >= 1
-bool millerTest(uint64_t d, uint64_t n)
-{
-    // Pick a random number in [2..n-2]
-    // Corner cases make sure that n > 4
+
+bool millerRabin(uint64_t d, uint64_t n){
+
     uint64_t a = 2 + rand() % (n - 4);
 
     // Compute a^d % n
-    uint64_t x = power(a, d, n);
+    uint64_t x = powr(a, d, n);
 
     if (x == 1 || x == n-1){
         return true;
     }
 
-    // Keep squaring x while one of the following doesn't
-    // happen
-    // (i) d does not reach n-1
-    // (ii) (x^2) % n is not 1
-    // (iii) (x^2) % n is not n-1
-    while (d != n-1)
-    {
+    while (d != n-1){
+
         x = (x * x) % n;
         d *= 2;
 
@@ -290,16 +271,12 @@ bool millerTest(uint64_t d, uint64_t n)
         }
     }
 
-    // Return composite
     return false;
 }
 
-// It returns false if n is composite and returns true if n
-// is probably prime. k is an input parameter that determines
-// accuracy level. Higher value of k indicates more accuracy.
-bool isPrime(uint64_t n, uint64_t k)
-{
-    // Corner cases
+
+bool isPrime(uint64_t n, uint64_t k){
+
     if (n <= 1 || n == 4){
 
         return false;
@@ -309,32 +286,16 @@ bool isPrime(uint64_t n, uint64_t k)
         return true;
     }
 
-    // Find r such that n = 2^d * r + 1 for some r >= 1
     uint64_t d = n - 1;
     while (d % 2 == 0){
-        d /= 2;
+        d = d/ 2;
     }
 
-    // Iterate given nber of 'k' times
     for (unsigned int i = 0; i < k; i++){
-        if (!millerTest(d, n)){
+        if (!millerRabin(d, n)){
             return false;
         }
     }
 
     return true;
 }
-
-// Driver program
-/*int main()
-{
-    int k = 4; // Number of iterations
-
-    cout << "All primes smaller than 100: \n";
-    for (int n = 1; n < 100; n++)
-    if (isPrime(n, k))
-        cout << n << " ";
-
-    return 0;
-}*/
-

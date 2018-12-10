@@ -18,8 +18,8 @@ int decrypt(uint64_t* in, uint64_t exponent, uint64_t modulo, uint64_t* decrypte
 PrimeClass brute_force_exec(uint64_t group);
 std::vector<int> readFile(std::string filename);
 bool isPrime(uint64_t n, uint64_t k);
-bool millerTest(uint64_t d, uint64_t n);
-uint64_t power(uint64_t x, uint64_t y, uint64_t p);
+bool millerRabin(uint64_t d, uint64_t n);
+uint64_t powr(uint64_t x, uint64_t y, uint64_t p);
 
 
 // Helper functions

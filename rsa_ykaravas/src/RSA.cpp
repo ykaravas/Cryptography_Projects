@@ -3,10 +3,12 @@
 #include <limits.h>
 #include <string.h>
 #include <time.h>
+#include <exception>
 
 #include "BBS.h"
 #include "CoreFunctions.h"
 #include "unittests.h"
+#include "Pollard.h"
 
 
 #define MAX_LENGTH 10000
@@ -55,87 +57,102 @@ int main() {
 
         if(input == "gen"){
 
-            std::cout << "\nType c to use Config file or r for random primes from primes.txt \n or b for BlumBlumShub: ";
-
-
             std::string input2;
-            std::cin >> input2;
-            std::cout << std::endl;
+
             std::pair<int, int> alice_primes;
             std::pair<int, int> bob_primes;
 
-            if(input2 == "c" || input2 == "C"){
-                std::ifstream genfile;
-                genfile.open("../config/gen.txt");
+            bool err = true;
+            while(err){
+                std::cout << "\nType c to use Config file \nor r for random primes from primes.txt \nor b for BlumBlumShub: ";
+                std::cin >> input2;
+                std::cout << std::endl;
+                if(input2 == "c" || input2 == "C"){
+                    std::ifstream genfile;
+                    genfile.open("../config/gen.txt");
 
-                genfile >> bob_primes.first >> bob_primes.second;
-                genfile >> alice_primes.first >> alice_primes.second;
+                    genfile >> bob_primes.first >> bob_primes.second;
+                    genfile >> alice_primes.first >> alice_primes.second;
 
-                if((bob_primes.first == 0) || (bob_primes.second == 0)) {
-                    std::cout << std::endl << std::endl
-                              << "Generator file with p and q, 'gen.txt', does not exist."
-                              << std::endl << std::endl;
-                    continue;
+                    if((bob_primes.first == 0) || (bob_primes.second == 0)) {
+                        std::cout << std::endl << std::endl
+                                  << "Generator file with p and q, 'gen.txt', does not exist."
+                                  << std::endl << std::endl;
+                        continue;
+                    }
+                    err = false;
+
+                }
+                else if(input2 == "r" || input2 == "R"){
+
+                    std::vector<int> prime_list = readFile("../config/primes.txt");
+
+
+                    srand (time(NULL));
+
+                    int first = rand() % prime_list.size();
+                    int second = rand() % prime_list.size();
+
+                    bob_primes.first = prime_list.at(first);
+                    bob_primes.second = prime_list.at(second);
+
+                    std::cout << "BOB Primes are P = " << bob_primes.first << " and Q = " << bob_primes.second << std::endl << std::endl;
+
+                    first = rand() % prime_list.size();
+                    second = rand() % prime_list.size();
+
+                    alice_primes.first = prime_list.at(first);
+                    alice_primes.second = prime_list.at(second);
+                    err = false;
+                    std::cout << "ALICE Primes are P = " << alice_primes.first << " and Q = " << alice_primes.second << std::endl << std::endl;
+
                 }
 
+                else if(input2 == "b" || input2 == "B"){
+                    unsigned int bits = 0;
+                    try{
+                        std::cout << "Enter Number if Bits Desired: ";
+
+                        std::string input;
+                        std::cin >> input;
+
+                        bits = std::stoi(input);
+                    }
+                    catch(const std::exception& e){
+                        std::cout << "\nINVALID entry. Try again\n\n";
+                        continue;
+                    }
+                    if((bits % 2 != 0) || (bits <= 12)){
+                        std::cout << "\nINVALID entry. Number of bits is either too small or not even.\n Must be even and greater than 12. Try again\n\n";
+                        continue;
+                    }
+
+                    BBS bbs_bob = BBS(bits);
+
+                    bob_primes.first =  bbs_bob.next(bits);
+                    bob_primes.second =  bbs_bob.next(bits);
+
+                    std::cout << "BOB Primes are P = " << bob_primes.first << " and Q = " << bob_primes.second << std::endl << std::endl;
+
+                    BBS bbs_alice = BBS(bits);
+                    alice_primes.first =  bbs_alice.next(bits);
+                    alice_primes.second =  bbs_alice.next(bits);
+                    err = false;
+                    std::cout << "ALICE Primes are P = " << alice_primes.first << " and Q = " << alice_primes.second << std::endl << std::endl;
+
+                }
+                else{
+                    std::cout << "INVALID entry. Try again\n ";
+                }
             }
-            else if(input2 == "r" || input2 == "R"){
-
-                std::vector<int> prime_list = readFile("../config/primes.txt");
-
-
-                srand (time(NULL));
-
-                int first = rand() % prime_list.size();
-                int second = rand() % prime_list.size();
-
-                bob_primes.first = prime_list.at(first);
-                bob_primes.second = prime_list.at(second);
-
-                std::cout << "BOB Primes are P = " << bob_primes.first << " and Q = " << bob_primes.second << std::endl << std::endl;
-
-                first = rand() % prime_list.size();
-                second = rand() % prime_list.size();
-
-                alice_primes.first = prime_list.at(first);
-                alice_primes.second = prime_list.at(second);
-
-                std::cout << "ALICE Primes are P = " << alice_primes.first << " and Q = " << alice_primes.second << std::endl << std::endl;
-
-            }
-
-            else if(input2 == "b" || input2 == "B"){
-
-                std::cout << "Enter Number if Bits Desired: ";
-
-                std::string input;
-                std::cin >> input;
-
-                unsigned int bits = std::stoi(input);
-
-                BBS bbs_bob = BBS(bits);
-
-                bob_primes.first =  bbs_bob.next(bits);
-                bob_primes.second =  bbs_bob.next(bits);
-
-                std::cout << "BOB Primes are P = " << bob_primes.first << " and Q = " << bob_primes.second << std::endl << std::endl;
-
-                BBS bbs_alice = BBS(bits);
-                alice_primes.first =  bbs_alice.next(bits);
-                alice_primes.second =  bbs_alice.next(bits);
-
-                std::cout << "ALICE Primes are P = " << alice_primes.first << " and Q = " << alice_primes.second << std::endl << std::endl;
-
-            }
-
             if (!(isPrime(alice_primes.first,100) || isPrime(alice_primes.first,100))) {
 
-                std::cerr << "ALICE primes are invalid." << std::endl;
+                std::cerr << "ALICE primes are INVALID." << std::endl;
                 return 1;
             }
             if (!(isPrime(bob_primes.first,100) || isPrime(bob_primes.first,100))) {
 
-                std::cerr << "BOB primes are invalid." << std::endl;
+                std::cerr << "BOB primes are INVALID." << std::endl;
                 return 1;
             }
 
@@ -265,8 +282,12 @@ int main() {
                           << std::endl << std::endl;
                 continue;
             }
-            PrimeClass pq = brute_force_exec(group);
-            privateKeyGen(pq.p, pq.q, &group, &brute_forced_private_key, intercepted_pub_key);
+            //PrimeClass pq = brute_force_exec(group);
+            //privateKeyGen(pq.p, pq.q, &group, &brute_forced_private_key, intercepted_pub_key);
+
+            uint64_t pp = findP(group);
+            uint64_t qq = group/pp;
+            privateKeyGen(pp, qq, &group, &brute_forced_private_key, intercepted_pub_key);
             std::cout << "EVE Brute Forced BOB Private key: " << brute_forced_private_key << std::endl;
             // Decrypt Alice's message
             std::ifstream encMesgFile;
@@ -387,7 +408,7 @@ int main() {
             return 0;
         }
         else {
-            std::cout << "Invalid Input. Try again." << std::endl;
+            std::cout << "INVALID Input. Try again." << std::endl;
         }
     }
 }

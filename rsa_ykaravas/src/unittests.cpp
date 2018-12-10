@@ -5,6 +5,7 @@
 #include "BBS.h"
 #include "PrimeClass.h"
 #include "CoreFunctions.h"
+#include "Pollard.h"
 
 
 void unitTests(){
@@ -66,11 +67,11 @@ void unitTests(){
     uint64_t private_key;
     uint64_t z_group;
 
-    char message_to_encrypt_char[MAX_LENGTH];
-    uint64_t message_to_encrypt_long[MAX_LENGTH*4];
-    uint64_t message_to_decrypt_long[MAX_LENGTH*4];
-    char decrypted_message_char[MAX_LENGTH];
-    uint64_t decrypted_message_long[MAX_LENGTH*4];
+    char message_to_encrypt_char[MAX_LENGTH] = {'\0'};
+    uint64_t message_to_encrypt_long[MAX_LENGTH*4] = {0};
+    uint64_t message_to_decrypt_long[MAX_LENGTH*4] = {0};
+    char decrypted_message_char[MAX_LENGTH] = {'\0'};
+    uint64_t decrypted_message_long[MAX_LENGTH*4] = {0};
 
     pass = true;
     std::ifstream pq_file;
@@ -78,7 +79,7 @@ void unitTests(){
 
     pq_file >> p >> q;
 
-    while(p != 0){
+    /*while(p != 0){
 
         publicKeyGen(p, q, &z_group, &public_key);
         //std::cout << "public key: " << public_key << ", " << z_group << std::endl;
@@ -116,8 +117,8 @@ void unitTests(){
     }
     if(pass){
         std::cout << "FULL TEST SUCCESS" << std::endl;
-    }
-
+    }*/
+    pq_file.close();
 
     pass = true;
     std::vector<int> prime_list = readFile("../config/primes.txt");
@@ -133,8 +134,8 @@ void unitTests(){
         int first = rand() % prime_list.size();
         int second = rand() % prime_list.size();
 
-        p = prime_list.at(first);
-        q = prime_list.at(second);
+        p = prime_list.at(100);
+        q = prime_list.at(104);
 
         //Generate public and private keys from p and q
         publicKeyGen(p, q, &z_group, &intercepted_public_key);
@@ -142,8 +143,12 @@ void unitTests(){
         privateKeyGen(p, q, &z_group, &private_key, intercepted_public_key);
         //std::cout << "ALICE private key: " << private_key << ", " << z_group << std::endl << std::endl;
 
-        PrimeClass pq = brute_force_exec(z_group);
-        privateKeyGen(pq.p, pq.q, &z_group, &brute_forced_private_key, intercepted_public_key);
+        //PrimeClass pq = brute_force_exec(z_group);
+        uint64_t pp = findP(z_group);
+        uint64_t qq = z_group/pp;
+
+
+        privateKeyGen(pp, qq, &z_group, &brute_forced_private_key, intercepted_public_key);
 
         if(brute_forced_private_key != private_key){
             std::cout << "FACTORING TEST FAILED" << std::endl;

@@ -45,15 +45,7 @@ uint64_t BBS::getPrime(unsigned int bits){
     //if (bits == 0){
     max = group_n - 2;
     possible_prime = min + rand() % ( max - min);
-    //}
-    /*else{
-        //max = powl(2,bits) - 2;
-        for(unsigned int i = 0; i< (((bits)/2) - 1); i++){
-            max *= 2;
-        }
-        max = max - 2;
-        possible_prime = min + rand() % (max - min);
-    }*/
+
     bool cont = true;
     while(cont){
         bool primality = isPrime(possible_prime, 100);
