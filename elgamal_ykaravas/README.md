@@ -67,7 +67,7 @@ NOTE* that your python alias "python" may be linked to python2.7 so you may need
 to run above commands with python<version_num> file.py instead. e.g. python3.5 elgamal.py
 
 
-When program is started, you shoud see the following:
+When program is started, you should see the following:
 
 
 	               MAIN PROGRAM FUNCTIONALITY & COMMAND LINE OPTIONS:
