@@ -5,9 +5,7 @@
 #include <fstream>
 #include <bits/stdc++.h>
 
-
 #include "CoreFunctions.h"
-
 
 
 std::vector<int> readFile(std::string filename){
@@ -63,9 +61,10 @@ uint64_t publicKeyGen(uint64_t p, uint64_t q, uint64_t *modulo, uint64_t *expone
     *modulo = (p-1)*(q-1);
 
     *exponent = (uint64_t)sqrt(*modulo);
-
+    uint64_t temp1;
+    uint64_t temp2;
     // Find a coprime
-    while (gcd(*exponent, *modulo) != 1) {
+    while (extendedEuclidianGCD(*exponent, *modulo, &temp1, &temp2) != 1) {
 
         (*exponent)++;
     }
@@ -208,6 +207,29 @@ int convertLong2Char(uint64_t* long_in, char* char_out, bool sub) {
 }
 
 
+// Extended Euclidian GCD
+uint64_t extendedEuclidianGCD(uint64_t num1, uint64_t num2, uint64_t *temp1, uint64_t *temp2){
+
+    if (num1 == 0){
+        *temp1 = 0;
+        *temp2 = 1;
+        return num2;
+    }
+
+    uint64_t temp3;
+    uint64_t temp4;
+    uint64_t gcd = extendedEuclidianGCD(num2%num1, num1, &temp3, &temp4);
+
+    // Update x and y using results of recursive
+    // call
+    *temp1 = temp4 - (num1/num2) * temp3;
+    *temp2 = temp3;
+
+    return gcd;
+}
+
+
+// Regular GCD
 uint64_t gcd(uint64_t p, uint64_t q) {
 
    if(p < q) {
@@ -228,6 +250,7 @@ uint64_t gcd(uint64_t p, uint64_t q) {
 }
 
 
+// Miller Rabin helper function
 uint64_t powr(uint64_t x, uint64_t y, uint64_t p){
 
     uint64_t res = 1;
@@ -247,6 +270,7 @@ uint64_t powr(uint64_t x, uint64_t y, uint64_t p){
 }
 
 
+// Miller Rabin primality test/helper function
 bool millerRabin(uint64_t d, uint64_t n){
 
     uint64_t a = 2 + rand() % (n - 4);
@@ -275,6 +299,7 @@ bool millerRabin(uint64_t d, uint64_t n){
 }
 
 
+// primality test using Miller Rabin
 bool isPrime(uint64_t n, uint64_t k){
 
     if (n <= 1 || n == 4){

@@ -3,6 +3,7 @@
 #include <math.h>
 #include <random>
 #include <time.h>
+
 #include "CoreFunctions.h"
 #include "BBS.h"
 
@@ -113,64 +114,3 @@ uint64_t BBS::next(unsigned int bits){
         }
     }
 }
-
-
-/*
-BBS::BBS(long double p, long double q, long double s){
-    this->p = p;
-    this->q = q;
-    this->seed = s;
-    M = p*q;
-    actual = s;
-}
-
-
-long double BBS::gcd(long double a, long double b){
-    if(b == 0) return a;
-    return gcd(b, fmod(a,b));
-}
-
-
-long double BBS::getrandom(){
-
-    long double r = fmod(actual*actual,M);
-    actual = r;
-    return r;
-}
-
-
-long double BBS::getirandom(int i){
-
-    long double g = gcd(p, q);
-    long double lcm = p*q/g;
-
-    long double exp = 1;
-    for(int j = 1; j <= i; ++j){
-
-        exp = fmod((exp+exp),lcm);
-    }
-
-    long double x0 = seed*seed;
-    long double r = x0;
-
-    for(int j = 2; j <= exp; ++j) r = fmod((r*x0),M);
-
-    return r;
-}
-*/
-
-
-
-/*int main(){
-
-    long double p = 11;
-    long double q = 19;
-    long double s = 3;
-
-    bbs b(p, q, s);
-    int n = 1000;
-    cout << n << endl;
-    for(int i = 0; i < n; ++i) {
-        cout << b.getrandom()/M << endl;
-    }
-}*/

@@ -9,6 +9,7 @@
 
 
 //uint64_t prime(uint64_t is_prime);
+uint64_t extendedEuclidianGCD(uint64_t num1, uint64_t num2, uint64_t *temp1, uint64_t *temp2);
 uint64_t gcd(uint64_t p, uint64_t q);
 uint64_t fastExponentiation(uint64_t base, uint64_t exponent, uint64_t modulo);
 uint64_t publicKeyGen(uint64_t p, uint64_t q, uint64_t *modulo, uint64_t *exponent);

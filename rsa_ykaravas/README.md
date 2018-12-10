@@ -92,13 +92,54 @@ There are many options which will be discussed below. They can be run one after 
 the program will run on loop until exit command is executed.
 
 
+**Functions**
+
+
+Core Functions:
+
+Extended Euclidian GCD: extendedEuclidianGCD
+Miller Rabin Primality test: isPrime
+Miller Rabin helper function: millerRabin
+Miller Rabin helper function: powr
+Pollard factorization helper function: PRFactor
+Pollard factorization main function: findP
+BlumBlumShub class constructor: BBS
+BlumBlumShub function to calculate bits: calcBits
+BlumBlumShub function to generate N: generateGroupN
+BlumBlumShub function used internally to get prime: getPrime
+BlumBlumShub function to generate random prime: next
+Fast Exponentiation: fastExponentiation
+Public Key Generator: publicKeyGen
+Private Key Generator: privateKeyGen
+Encryption function: encrypt
+Decryption function: decrypt
+Main execution loop: main
+
+
+Helper Functions:
+
+File Reader: readFile
+Helper function to allow strings: convertChar2Long
+Helper function to allow strings: convertLong2Char
+Unit test execution function: unitTests
+
+
+Obsolete Functions:
+
+Brute Force Factorization Helper function: findFactor (no longer used)
+Brute Force Factorization Helper function: bruteForce (no longer used)
+Brute Force Factoring: brute_force_exec (no longer used)
+Regular GCD: gcd (no longer used)
+
+
+
 **Description**
 
 
 The first command that should be run is "gen" which stands for generate. The user will then be 
 prompted to either opt to use the prime numbers located in the config/gen.txt file by typing
-'c', or to use random pairs of primes located in config/primes.txt. Program will then check to 
-make sure the numbers are in fact prime. At this stage, both Alice and Bob will be independently 
+'c', to use random pairs of primes located in config/primes.txt or to generate random primes
+using the BlumBlumShub algorithm. At this stage, both Alice and Bob will be independently
 be generating their public and private keys. These keys are generated using the publicKeyGen and
 privateKeyGen functions which both take as input the two prime numbers, p and q, the modulo, which
 is (p-1)(q-1) and the address of the public key (to write to it); Of course the privateKeyGen 
@@ -130,13 +171,13 @@ Finally, the "eve" command can be used (but note that this can even be used dire
 ). This command simulates Eve eavesdropping on the communications between Alice and Bob. Eve gets a
 hold of Bob's public key (which is easily accessible by anyone) and intercepts the encrypted message 
 which Alice had "sent" Bob earlier. Given that our primes are only on the order of 30 bits, it is fairly
-easy for Eve to brute force factor bobs modulo into its two prime factors. This is how it is done here. I
-am using an unrolled loop, skipping evens, optimizing compilation and of course it is written in C++ so 
-for numbers this small this brute force approach, although bland, is effective. Once Eve has Bob's P and Q,
-She can then use Bob's public key, modulo and P and Q to calculate his private key fairly easily and in 
-turn decrypt Alice's message which was intended for Bob. This part of the program loads the original plain
-text message and Bobs actual private key to check if the attack was successful. Eve then saves out the 
-decrypted message along with Bob's compromised private key to Eve's directory (as proof).
+easy for Eve to brute force factor bobs modulo into its two prime factors. This was how it was previously
+done but i have since switched to the Pollard P - 1 algorithm in order to factor N in this program. Once
+Eve has Bob's P and Q, She can then use Bob's public key, modulo and P and Q to calculate his private key
+fairly easily and in turn decrypt Alice's message which was intended for Bob. This part of the program
+loads the original plain text message and Bobs actual private key to check if the attack was successful.
+Eve then saves out the decrypted message along with Bob's compromised private key to Eve's directory
+(as proof). Note* Miller Rabin is used throughout program to test primality.
 
 There is also a "msg" command to allow user to more easily change the original plain text message that 
 Alice sends to Bob without much manual effort. The "unit" command runs all the unit tests build for this 

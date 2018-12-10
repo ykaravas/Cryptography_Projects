@@ -328,9 +328,11 @@ int main() {
 
             uint64_t num2;
             num2 = std::stoll(num1);
-            PrimeClass pq = brute_force_exec(num2);
+            uint64_t pp = findP(num2);
+            uint64_t qq = num2/pp;
+            //PrimeClass pq = brute_force_exec(num2);
 
-            std::cout << "Prime factors of " << num2 << " are " << pq.p << " and " << pq.q << std::endl << std::endl;
+            std::cout << "Prime factors of " << num2 << " are " << pp << " and " << qq << std::endl << std::endl;
 
         }
         else if (input == "gcd") {
@@ -345,7 +347,9 @@ int main() {
             num3 = std::stoll(num1);
             num4 = std::stoll(num2);
 
-            uint64_t denominator = gcd(num3,num4);
+            uint64_t temp1;
+            uint64_t temp2;
+            uint64_t denominator = extendedEuclidianGCD(num3,num4, &temp1, &temp2);
 
             std::cout << "GCD of " << num3 << " and " << num4 << " is " << denominator << std::endl << std::endl;
 

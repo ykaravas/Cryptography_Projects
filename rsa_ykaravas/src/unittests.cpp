@@ -17,7 +17,10 @@ void unitTests(){
     bool pass = true;
     while(num1 != 0 || num2 != 0){
 
-        int temp = gcd(num1,num2);
+        uint64_t temp1;
+        uint64_t temp2;
+        uint64_t temp =  extendedEuclidianGCD(num1,num2, &temp1, &temp2);
+        //int temp = gcd(num1,num2);
         if(temp != gcd_num){
             std::cout << "GCD UNIT TEST FAILED" << std::endl;
             pass = false;
@@ -53,10 +56,6 @@ void unitTests(){
 
     is_it_prime_file.close();
 
-    //BBS bbs = BBS(32);
-
-    //uint64_t a = bbs.getPrime(32);
-    //uint64_t b =  bbs.next(32);
 
 #define MAX_LENGTH 10000
 
@@ -67,11 +66,11 @@ void unitTests(){
     uint64_t private_key;
     uint64_t z_group;
 
-    char message_to_encrypt_char[MAX_LENGTH] = {'\0'};
+    /*char message_to_encrypt_char[MAX_LENGTH] = {'\0'};
     uint64_t message_to_encrypt_long[MAX_LENGTH*4] = {0};
     uint64_t message_to_decrypt_long[MAX_LENGTH*4] = {0};
     char decrypted_message_char[MAX_LENGTH] = {'\0'};
-    uint64_t decrypted_message_long[MAX_LENGTH*4] = {0};
+    uint64_t decrypted_message_long[MAX_LENGTH*4] = {0};*/
 
     pass = true;
     std::ifstream pq_file;
@@ -123,8 +122,8 @@ void unitTests(){
     pass = true;
     std::vector<int> prime_list = readFile("../config/primes.txt");
 
-    uint64_t brute_forced_private_key;
-    uint64_t intercepted_public_key;
+    //uint64_t brute_forced_private_key;
+    //uint64_t intercepted_public_key;
 
     int i = 0;
     while(i < 15){
@@ -134,46 +133,39 @@ void unitTests(){
         int first = rand() % prime_list.size();
         int second = rand() % prime_list.size();
 
-        p = prime_list.at(100);
-        q = prime_list.at(104);
+        p = prime_list.at(first);
+        q = prime_list.at(second);
 
         //Generate public and private keys from p and q
-        publicKeyGen(p, q, &z_group, &intercepted_public_key);
+        //publicKeyGen(p, q, &z_group, &intercepted_public_key);
         //std::cout << "ALICE public key: " << intercepted_public_key << ", " << z_group << std::endl;
-        privateKeyGen(p, q, &z_group, &private_key, intercepted_public_key);
+        //privateKeyGen(p, q, &z_group, &private_key, intercepted_public_key);
         //std::cout << "ALICE private key: " << private_key << ", " << z_group << std::endl << std::endl;
 
         //PrimeClass pq = brute_force_exec(z_group);
-        uint64_t pp = findP(z_group);
-        uint64_t qq = z_group/pp;
+        uint64_t z_group = p*q;
+        uint64_t qq = findP(z_group);
+        uint64_t pp = z_group/qq;
 
+        if(pp==q && qq == p){
+            uint64_t temp = pp;
+            pp = qq;
+            qq = temp;
 
-        privateKeyGen(pp, qq, &z_group, &brute_forced_private_key, intercepted_public_key);
+        }
 
-        if(brute_forced_private_key != private_key){
+        //privateKeyGen(pp, qq, &z_group, &brute_forced_private_key, intercepted_public_key);
+
+        if(pp != p || qq != q ){
             std::cout << "FACTORING TEST FAILED" << std::endl;
             pass = false;
             break;
         }
+        i++;
     }
     if(pass){
         std::cout << "FACTORING TEST SUCCESS" << std::endl;
     }
-    /*
-    prime(uint64_t is_prime); // (num is_prime?)
-    gcd(uint64_t p, uint64_t q); // (num1 num2 gcdnum)
-    fastExponentiation(uint64_t base, uint64_t exponent, uint64_t modulo); // (prime1 prime2, n)
-    publicKeyGen(uint64_t p, uint64_t q, uint64_t *modulo, uint64_t *exponent); // (p q pub_key)
-    privateKeyGen(uint64_t p, uint64_t q, uint64_t *modulo, uint64_t *exponent, uint64_t pub); // (p q pub_key priv_key)
-    encrypt(uint64_t* in, uint64_t exponent, uint64_t modulo, uint64_t* encrypted_msg_segment, size_t len); // (msg hash)
-    decrypt(uint64_t* in, uint64_t exponent, uint64_t modulo, uint64_t* decrypted_msg_segment, size_t len); // (hash msg)
-    brute_force_exec(uint64_t group); // (prime1 prime2, n)
-    */
 
 }
 
-// (prime1 prime2, n)
-// (num is_prime?)
-// (num1 num2 gcdnum)
-// (p q pub_key priv_key)
-// (msg hash)

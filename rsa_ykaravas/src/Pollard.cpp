@@ -16,7 +16,9 @@ uint64_t PRFactor(uint64_t n, uint64_t x){
         }
         a = temp % n;
     }
-    uint64_t d = gcd(a-1,n);
+    uint64_t temp1;
+    uint64_t temp2;
+    uint64_t d = extendedEuclidianGCD(a-1,n, &temp1, &temp2);
     if((1 < d) && (d  < n)){
         return d;
     }

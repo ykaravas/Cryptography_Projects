@@ -17,17 +17,6 @@ public:
 
     uint64_t group_n;
     uint64_t state;
-/*
-    BBS(long double p, long double q, long double s);
-
-    long double p, q, M, seed, actual;
-
-    long double gcd(long double a, long double b);
-
-    long double getrandom();
-
-    long double getirandom(int i);
-    */
 };
 
 
