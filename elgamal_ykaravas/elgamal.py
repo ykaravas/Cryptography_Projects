@@ -171,6 +171,15 @@ def getMultInv(pubkey, own_privkey):
 	secret_key_inv = pow(secret_key, group_n - 2, group_n)
 	return secret_key_inv
 
+
+def extendedEuclidianGCD(num1, num2):
+    if num1 == 0:
+        return (num2, 0, 1)
+    else:
+        fin, temp1, temp2 = extendedEuclidianGCD(num2 % num1, num1)
+        return (fin, temp2 - (num2 // num1) * num1, num1)
+
+
 def gcd(a, b):
 	while b != 0:
 		c = a % b
@@ -405,8 +414,8 @@ def run():
 		elif command == 'gcd':
 			new_command = input('\nEnter two numbers to get their gcd: ')
 			a = new_command.split()
-			out = gcd(int(a[0]), int(a[1]))
-			print("\nGCD of {0} and {1} is: {2}".format(a[0], a[1], out))
+			out = extendedEuclidianGCD(int(a[0]), int(a[1]))
+			print("\nGCD of {0} and {1} is: {2}".format(a[0], a[1], out[0]))
 		elif command == 'prime':
 			new_command = input('\nEnter number to find out if it is prime: ')
 			out = millerRabin(int(new_command),100)

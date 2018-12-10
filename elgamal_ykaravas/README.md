@@ -117,7 +117,7 @@ Math/Crypto Helper Functions:
 	- Get the secret key: getSecret
 	- Get the multiplicative inverse of secret key: getMultInv
 	- Find primitive Root: findPrimitiveRoot
-	- Find GCD: gcd
+	- Find GCD: extendedEuclidianGCD
 
 
 Core Functions:
@@ -133,6 +133,9 @@ Core Functions:
 	- Core function used to decrypt: decrypt
 	- Main worker function which runs in loop: run
 	- Main execution function: main
+
+Obsolete Functions:
+	- Find GCD: gcd
 
 
 **Description**
