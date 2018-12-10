@@ -97,39 +97,39 @@ the program will run on loop until exit command is executed.
 
 Core Functions:
 
-Extended Euclidian GCD: extendedEuclidianGCD
-Miller Rabin Primality test: isPrime
-Miller Rabin helper function: millerRabin
-Miller Rabin helper function: powr
-Pollard factorization helper function: PRFactor
-Pollard factorization main function: findP
-BlumBlumShub class constructor: BBS
-BlumBlumShub function to calculate bits: calcBits
-BlumBlumShub function to generate N: generateGroupN
-BlumBlumShub function used internally to get prime: getPrime
-BlumBlumShub function to generate random prime: next
-Fast Exponentiation: fastExponentiation
-Public Key Generator: publicKeyGen
-Private Key Generator: privateKeyGen
-Encryption function: encrypt
-Decryption function: decrypt
-Main execution loop: main
+	- Extended Euclidian GCD: extendedEuclidianGCD
+	- Miller Rabin Primality test: isPrime
+	- Miller Rabin helper function: millerRabin
+	- Miller Rabin helper function: powr
+	- Pollard factorization helper function: PRFactor
+	- Pollard factorization main function: findP
+	- BlumBlumShub class constructor: BBS
+	- BlumBlumShub function to calculate bits: calcBits
+	- BlumBlumShub function to generate N: generateGroupN
+	- BlumBlumShub function used internally to get prime: getPrime
+	- BlumBlumShub function to generate random prime: next
+	- Fast Exponentiation: fastExponentiation
+	- Public Key Generator: publicKeyGen
+	- Private Key Generator: privateKeyGen
+	- Encryption function: encrypt
+	- Decryption function: decrypt
+	- Main execution loop: main
 
 
 Helper Functions:
 
-File Reader: readFile
-Helper function to allow strings: convertChar2Long
-Helper function to allow strings: convertLong2Char
-Unit test execution function: unitTests
+	- File Reader: readFile
+	- Helper function to allow strings: convertChar2Long
+	- Helper function to allow strings: convertLong2Char
+	- Unit test execution function: unitTests
 
 
 Obsolete Functions:
 
-Brute Force Factorization Helper function: findFactor (no longer used)
-Brute Force Factorization Helper function: bruteForce (no longer used)
-Brute Force Factoring: brute_force_exec (no longer used)
-Regular GCD: gcd (no longer used)
+	- Brute Force Factorization Helper function: findFactor (no longer used)
+	- Brute Force Factorization Helper function: bruteForce (no longer used)
+	- Brute Force Factoring: brute_force_exec (no longer used)
+	- Regular GCD: gcd (no longer used)
 
 
 
