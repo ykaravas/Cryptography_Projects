@@ -167,9 +167,9 @@ the process my program will undergo during the collaboration process will be ide
 manual replacement of keys and messages with those provided by my project mates. 
 
 There are also three other commands I have added in order to make the building blocks/functions of the 
-overall project a bit more accessible. These include "prime", to check if a number is prime, "gcd" to find the 
-greatest common denominator of two numbers entered by the user and finally "modexp" which takes three
-arguments, base, exponent and modulo and performs modular exponentiation (base^exponent)%modulo.
+overall project a bit more accessible. These include "prime", to check if a number is prime, "gcd" to 
+find the greatest common denominator of two numbers entered by the user and finally "modexp" which takes 
+three arguments, base, exponent and modulo and performs modular exponentiation (base^exponent)%modulo.
 
 
 

@@ -2,20 +2,22 @@ import random
 import math
 import sys
 import os
+from BBS import BlumBlumShub
+from BBS import millerRabin
 
 
 ######## HELPER CLASSES ########
 
 class public_key(object):
-	def __init__(self, group_prime = None, prim_root = None, prim_rt_exp_priv = None, num_bits = 0):
-		self.group_prime = group_prime
+	def __init__(self, group_n = None, prim_root = None, prim_rt_exp_priv = None, num_bits = 0):
+		self.group_n = group_n
 		self.prim_root = prim_root
 		self.prim_rt_exp_priv = prim_rt_exp_priv
 		self.num_bits = num_bits
 
 class private_key(object):
-	def __init__(self, group_prime = None, prim_root = None, priv_num = None, num_bits = 0):
-		self.group_prime = group_prime
+	def __init__(self, group_n = None, prim_root = None, priv_num = None, num_bits = 0):
+		self.group_n = group_n
 		self.prim_root = prim_root
 		self.priv_num = priv_num
 		self.num_bits = num_bits
@@ -26,33 +28,47 @@ class private_key(object):
 def modularExp(base, exp, modulus):
 	return pow(base, exp, modulus)
 
+	
+def fastModular(base,exp,mod):
+    b = base
+    e = exp
+    fin = 1
+    while e > 0:
+        if e % 2 == 0:
+            b = (b * b) % mod
+            e = e/2
+        else:
+            fin = (b * fin) % mod
+            e = e - 1
+    return fin
+	
 
 def calcNumBits(prime_num):
     return math.ceil(math.log(prime_num, 2))
 
 
-def isPrime(num):
-	if ((num == 2) or (num == 3)):
-		return True
-	if (((num % 2) == 0) or (num < 2)):
-		return False
-	for i in range(3, int(num ** 0.5) + 1, 2):
-		if ((num % i) == 0):
-			return False    
+# def isPrime(num):
+# 	if ((num == 2) or (num == 3)):
+# 		return True
+# 	if (((num % 2) == 0) or (num < 2)):
+# 		return False
+# 	for i in range(3, int(num ** 0.5) + 1, 2):
+# 		if ((num % i) == 0):
+# 			return False    
 			
-	return True
+# 	return True
 
 
 def getSecret(pubkey, own_privkey):
-	group_prime = pubkey.group_prime
-	secret_key = modularExp(pubkey.prim_rt_exp_priv, own_privkey.priv_num, group_prime)
+	group_n = pubkey.group_n
+	secret_key = fastModular(pubkey.prim_rt_exp_priv, own_privkey.priv_num, group_n)
 	return secret_key
 
 
 def getMultInv(pubkey, own_privkey):
-	group_prime = pubkey.group_prime
+	group_n = pubkey.group_n
 	secret_key = getSecret(pubkey, own_privkey)
-	secret_key_inv = pow(secret_key, group_prime - 2, group_prime)
+	secret_key_inv = pow(secret_key, group_n - 2, group_n)
 	return secret_key_inv
 
 def gcd(a, b):
@@ -74,8 +90,8 @@ def findPrimitiveRoot(num):
 
  	while(1):
  		possible_prim_root = random.randint( 2, num-1 )
- 		if not (modularExp(possible_prim_root, (num-1) // temp1, num) == 1):
- 			if not (modularExp(possible_prim_root, (num-1) // temp2, num) == 1):
+ 		if not (fastModular(possible_prim_root, (num-1) // temp1, num) == 1):
+ 			if not (fastModular(possible_prim_root, (num-1) // temp2, num) == 1):
  				return possible_prim_root
 
 			
@@ -104,9 +120,9 @@ def writeKeyOrMsg(filename, filetype, key = None, msg = None):
     
 	f = open(filename,'w') 
 	if filetype == "priv":
-		f.write("{group_prime},{prim_root},{priv_num}".format(group_prime = key.group_prime, prim_root = key.prim_root, priv_num = key.priv_num))
+		f.write("{group_n},{prim_root},{priv_num}".format(group_n = key.group_n, prim_root = key.prim_root, priv_num = key.priv_num))
 	elif filetype == "pub":
-		f.write("{group_prime},{prim_root},{prim_rt_exp_priv}".format(group_prime = key.group_prime, prim_root = key.prim_root, prim_rt_exp_priv = key.prim_rt_exp_priv))
+		f.write("{group_n},{prim_root},{prim_rt_exp_priv}".format(group_n = key.group_n, prim_root = key.prim_root, prim_rt_exp_priv = key.prim_rt_exp_priv))
 	elif filetype == "msg":
 		f.write(msg)
 	f.close()
@@ -115,9 +131,7 @@ def writeKeyOrMsg(filename, filetype, key = None, msg = None):
 def displayOptions():
 	print("               MAIN PROGRAM FUNCTIONALITY & COMMAND LINE OPTIONS:")
 	print("---------------------------------------------------------------------------------\n")
-	print("		  gen  		This will prompt user for a large prime number. Can also")
-	print("		      		type 'rand' instead of a large prime which will choose")
-	print("		        	prime from prime.txt file in Generated_Files directory.")
+	print("		  gen  		This will prompt user for number of bits for large prime.")
 	print("		  enc  		Alice will encrypt original_msg.txt in her directory")
 	print("		  dec   	Bob will decrypt the message previously encrypted by Alice")
 	print("		  eve   	Eve will simulate MITM attack by taking Alice's Public key")
@@ -199,24 +213,24 @@ def convertInts2Bytes(msg, num_bits):
 
 
 # Generate pub and priv keys.
-def generateKeys(large_prime, published_prim_root = 0):
-	group_prime = large_prime
+def generateKeys(large_prime, bbs, published_prim_root = 0):
 	num_bits = calcNumBits(large_prime)
 	prim_root = 0
 
 	# Alice is generating key here and hasnt published yet.
 	if published_prim_root == 0:
-		prim_root = findPrimitiveRoot(group_prime)
-		prim_root = modularExp(prim_root, 2, group_prime)
+		prim_root = findPrimitiveRoot(large_prime)
+		prim_root = fastModular(prim_root, 2, large_prime)
 	# Alice has published and Bob will use that primitive root as well.
 	else:
 		prim_root = published_prim_root
 
-	priv_num = random.randint(1, (group_prime - 1) // 2)
-	prim_rt_exp_priv = modularExp(prim_root, priv_num, group_prime)
+	priv_num = random.randint(1, (bbs.group_n - 1) // 2)
+	#priv_num = bbs.getPrime()
+	prim_rt_exp_priv = fastModular(prim_root, priv_num, large_prime)
 
-	pub_key = public_key(group_prime, prim_root, prim_rt_exp_priv, num_bits)
-	priv_key = private_key(group_prime, prim_root, priv_num, num_bits)
+	pub_key = public_key(large_prime, prim_root, prim_rt_exp_priv, num_bits)
+	priv_key = private_key(large_prime, prim_root, priv_num, num_bits)
 
 	return {'public_key': pub_key, 'private_key': priv_key}
 
@@ -232,7 +246,7 @@ def encrypt(pubkey, privkey, plain_text):
 
 	cipher = []
 	for i in z:
-		d = (i * secret) % pubkey.group_prime
+		d = (i * secret) % pubkey.group_n
 		cipher.append(d)
 	
 	for obj in cipher:
@@ -251,7 +265,7 @@ def decrypt(pubkey, privkey, cipher):
 	cipher_array = cipher.split()
 	for obj in cipher_array:
 		d = int(obj)
-		plain = (d * secret_inv) % pubkey.group_prime
+		plain = (d * secret_inv) % pubkey.group_n
 		plain_text.append(plain)
 
 	decrypted_text = convertInts2Bytes(plain_text, privkey.num_bits)
@@ -291,28 +305,17 @@ def run():
 		command = input('Enter Desired Command: ')
 		command = command.replace(" ", "")
 		if command == "gen":
-			new_command = input('Enter Large Prime Number: ')
-			new_command = new_command.replace(" ", "")
-			large_prime = 0
+			num_bits = input('Enter Number of bits: ')
 			# User input of large prime.
-			if new_command == 'rand':
-				primes = readKeyOrMsg(os.path.join("Generated_Files", "primes.txt"), "msg")
-				prime_list = primes.split()
-				num_choice = random.randint(1, len(prime_list))
-				large_prime = int(prime_list[num_choice])
-			else:
-				large_prime = int(new_command)
 
-			if(not isPrime(large_prime)):
-				print("User entered number, {0}, is not prime".format(large_prime))
-			if (calcNumBits(large_prime) < 8):
-				print("This prime number, {0}, is too small (less than 8 bits)".format(large_prime))
-				continue
+			BBS = BlumBlumShub(int(num_bits))
+			large_prime = BBS.getPrime()
+
 			print("\nPRIME CHOSEN: {0}\n".format(large_prime))
-			# ALICE Generates her keys.
+			# ALICE Generates her keys.gen
 
 			# Generate keys.
-			alice_keys = generateKeys(large_prime)
+			alice_keys = generateKeys(large_prime, BBS)
 			alice_priv = alice_keys['private_key']
 			alice_pub = alice_keys['public_key']
 
@@ -326,7 +329,7 @@ def run():
 			alice_pub_key_obj = readKeyOrMsg(os.path.join("Generated_Files", "Alice", "my_public_key.txt"), "pub")
 
 			# Generate Bob's keys with extra arguement of Alice's primitive root.
-			bob_keys = generateKeys(alice_pub_key_obj.group_prime, alice_pub_key_obj.prim_root)
+			bob_keys = generateKeys(large_prime, BBS, alice_pub_key_obj.prim_root)
 			bob_priv = bob_keys['private_key']
 			bob_pub = bob_keys['public_key']
 
@@ -376,10 +379,10 @@ def run():
 		elif command == 'eve':
 			bob_pub_key_obj = readKeyOrMsg(os.path.join("Generated_Files", "Bob", "my_public_key.txt"), "pub")
 			encrypted_msg = readKeyOrMsg(os.path.join("Generated_Files", "Alice", "encrypted_msg.txt"), "msg")
-			result_priv_num = bigStepLittleStep(bob_pub_key_obj.group_prime, bob_pub_key_obj.prim_root, bob_pub_key_obj.prim_rt_exp_priv)
+			result_priv_num = bigStepLittleStep(bob_pub_key_obj.group_n, bob_pub_key_obj.prim_root, bob_pub_key_obj.prim_rt_exp_priv)
 
 			# Save Bob's cracked key.
-			bob_cracked_key = private_key(bob_pub_key_obj.group_prime, bob_pub_key_obj.prim_root, result_priv_num, calcNumBits(bob_pub_key_obj.group_prime))
+			bob_cracked_key = private_key(bob_pub_key_obj.group_n, bob_pub_key_obj.prim_root, result_priv_num, calcNumBits(bob_pub_key_obj.group_n))
 			writeKeyOrMsg(os.path.join("Generated_Files", "Eve", "cracked_private_key.txt"), "priv", bob_cracked_key)
 
 			# Get Alice's pub key now that we have Alice's private to calculate shared key and decrypt message
@@ -415,7 +418,7 @@ def run():
 			print("\nGCD of {0} and {1} is: {2}".format(a[0], a[1], out))
 		elif command == 'prime':
 			new_command = input('\nEnter number to find out if it is prime: ')
-			out = isPrime(int(new_command))
+			out = millerRabin(int(new_command),100)
 			if out == True:
 				print("\n{0} is prime".format(new_command))
 			elif out == False:
@@ -423,7 +426,7 @@ def run():
 		elif command == 'modexp':
 			new_command = input('\nEnterthree numbers, base, exponent and modulo to perform modular exponentiation: ')		
 			a = new_command.split()
-			out = modularExp(int(a[0]), int(a[1]), int(a[2]))
+			out = fastModular(int(a[0]), int(a[1]), int(a[2]))
 			print("\nOutput from modular exponentiation {0}^{1}*mod{2} is: {3}".format(int(a[0]), int(a[1]), int(a[2]), out))
 		elif command == 'exit':
 			break
