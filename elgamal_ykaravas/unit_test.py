@@ -15,16 +15,14 @@ class calcNumBitsTests(unittest.TestCase):
 
 class isPrimeTests(unittest.TestCase):
     def test_general(self):
-        self.assertEqual(elgamal.millerRabin(0, 100), False)
-        self.assertEqual(elgamal.millerRabin(1, 100), False)
-        self.assertEqual(elgamal.millerRabin(2, 100), True)
-        self.assertEqual(elgamal.millerRabin(3, 100), True)
-        self.assertEqual(elgamal.millerRabin(961751663, 100), True)
-        self.assertEqual(elgamal.millerRabin(1000000003273, 100), True)
-        self.assertEqual(elgamal.millerRabin(100000, 100), False)
-        self.assertEqual(elgamal.millerRabin(16, 100), False)
-        self.assertEqual(elgamal.millerRabin(17, 100), True)
-        self.assertEqual(elgamal.millerRabin(29, 100), True)
+        self.assertEqual(millerRabin(2, 100), True)
+        self.assertEqual(millerRabin(3, 100), True)
+        self.assertEqual(millerRabin(961751663, 100), True)
+        self.assertEqual(millerRabin(1000000003273, 100), True)
+        self.assertEqual(millerRabin(100000, 100), False)
+        self.assertEqual(millerRabin(16, 100), False)
+        self.assertEqual(millerRabin(17, 100), True)
+        self.assertEqual(millerRabin(29, 100), True)
     
 class getMultInvTests(unittest.TestCase):
     def test_general(self):
