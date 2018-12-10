@@ -364,9 +364,9 @@ int main() {
             uint64_t num2;
             num2 = std::stoll(num1);
 
-            uint64_t is_prime = isPrime(num2,100);
+            bool is_prime = isPrime(num2,100);
 
-            if(is_prime == 0){
+            if(is_prime){
 
                 std::cout <<  num2 << " is prime."  << std::endl << std::endl;
             }
