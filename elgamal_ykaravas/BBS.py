@@ -69,14 +69,20 @@ class BlumBlumShub(object):
 
     def next(self, bits):
         
-        fin = 0
-        for i in range(bits):
+        possible_prime = 0
+        while True:
+            possible_prime = 0
+            for i in range(bits):
+                
+                self.state = (self.state**2) % self.group_n
             
-            self.state = (self.state**2) % self.group_n
-            
-            fin = (fin << 1) | (self.state & 1)
-        
-        return fin    
+                possible_prime = (possible_prime << 1) | (self.state & 1)
+
+            if (possible_prime % 4 == 3) and millerRabin(possible_prime, 100):
+                return possible_prime
+            else:
+                continue
+            #possible_prime += 1
 
 
 		

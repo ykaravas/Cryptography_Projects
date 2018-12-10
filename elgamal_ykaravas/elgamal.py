@@ -225,8 +225,7 @@ def generateKeys(large_prime, bbs, published_prim_root = 0):
 	else:
 		prim_root = published_prim_root
 
-	priv_num = random.randint(1, (bbs.group_n - 1) // 2)
-	#priv_num = bbs.getPrime()
+	priv_num = bbs.next(num_bits) 
 	prim_rt_exp_priv = fastModular(prim_root, priv_num, large_prime)
 
 	pub_key = public_key(large_prime, prim_root, prim_rt_exp_priv, num_bits)
@@ -309,7 +308,7 @@ def run():
 			# User input of large prime.
 
 			BBS = BlumBlumShub(int(num_bits))
-			large_prime = BBS.getPrime()
+			large_prime = BBS.next(int(num_bits))
 
 			print("\nPRIME CHOSEN: {0}\n".format(large_prime))
 			# ALICE Generates her keys.gen
